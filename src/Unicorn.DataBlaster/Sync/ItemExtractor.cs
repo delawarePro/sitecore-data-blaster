@@ -81,10 +81,10 @@ namespace Unicorn.DataBlaster.Sync
 				return BulkLoadAction.AddItemOnly;
 			}
 
-			if (evaluator is AddOnlyEvaluator)
-			{
-				return BulkLoadAction.AddOnly;
-			}
+			//if (evaluator is AddOnlyEvaluator)
+			//{
+			//	return BulkLoadAction.AddOnly;
+			//}
 
 			throw new ArgumentException($"Unknown evaluator type: '{evaluator.GetType().Name}'");
 		}
