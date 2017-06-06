@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>Sitecore.DataBlasterContoso.Utility.UsefulStuff</id>
+
+        <authors>delaware-digital</authors>
+        <owners>delaware-digital</owners>
+
+        <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+        <projectUrl>http://github.com/delawarePro/Digital/sitecore-data-blaster</projectUrl>
+
+        <!-- Todo -->
+        <!--<iconUrl>http://github.com/contoso/UsefulStuff/nuget_icon.png</iconUrl>-->
+
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+
+        <tags>sitecore items</tags>
+    </metadata>
+</package>

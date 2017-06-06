@@ -155,5 +155,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Read\Sql\GetDescendantVersionHeaders.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Sitecore.DataBlaster.nuspec" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
