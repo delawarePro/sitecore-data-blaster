@@ -43,9 +43,9 @@ namespace Unicorn.DataBlaster.Sync
 			}
 		}
 
-		protected virtual BulkLoader BulkLoader { get; }
+		private BulkLoader BulkLoader { get; }
 
-		protected virtual ItemExtractor ItemExtractor { get; }
+		private ItemExtractor ItemExtractor { get; }
 
 		/// <summary>
 		/// Whether to skip updating the history engine.

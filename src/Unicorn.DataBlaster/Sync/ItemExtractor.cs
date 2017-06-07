@@ -16,7 +16,7 @@ namespace Unicorn.DataBlaster.Sync
 	/// </summary>
 	public class ItemExtractor
 	{
-		protected virtual ItemMapper ItemMapper { get; }
+		private ItemMapper ItemMapper { get; }
 
 		public ItemExtractor(ItemMapper itemMapper = null)
 		{
