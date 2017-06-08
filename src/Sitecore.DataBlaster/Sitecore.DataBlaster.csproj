@@ -100,11 +100,7 @@
     <Compile Include="Util\CacheUtil.cs" />
     <Compile Include="Util\Chain.cs" />
     <Compile Include="Util\GuidUtility.cs" />
-    <Compile Include="Util\Logging\IReadableLog.cs" />
-    <Compile Include="Util\Logging\LogExtensions.cs" />
-    <Compile Include="Util\Logging\MemoryLog.cs" />
-    <Compile Include="Util\Logging\ReadableLoggerWrapper.cs" />
-    <Compile Include="Util\Logging\SitecoreLogFileAppender.cs" />
+    <Compile Include="Util\LogExtensions.cs" />
     <Compile Include="Util\Sql\SqlContext.cs" />
     <Compile Include="Util\Sql\SqlContextExtensions.cs" />
     <Compile Include="Util\Sql\SqlLine.cs" />

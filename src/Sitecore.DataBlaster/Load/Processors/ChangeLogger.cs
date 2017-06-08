@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using log4net.spi;
 using Sitecore.DataBlaster.Load.Sql;
-using Sitecore.DataBlaster.Util.Logging;
+using Sitecore.DataBlaster.Util;
 
 namespace Sitecore.DataBlaster.Load.Processors
 {

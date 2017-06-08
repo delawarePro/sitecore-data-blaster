@@ -1,7 +1,7 @@
 ﻿using log4net;
 using log4net.spi;
 
-namespace Sitecore.DataBlaster.Util.Logging
+namespace Sitecore.DataBlaster.Util
 {
     public static class LogExtensions
     {
