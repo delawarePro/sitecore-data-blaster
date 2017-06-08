@@ -25,7 +25,7 @@
         </dependencies>
 
         <contentFiles>
-            <file src="App_Config\**\*" target="Content\App_Config" />
+            <files src="App_Config\**\*" target="Content\App_Config" />
         </contentFiles>
     </metadata>
 </package>
