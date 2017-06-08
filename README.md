@@ -35,3 +35,48 @@ The automated tests are not located in this repository, because we need a more e
 [Unicorn](https://github.com/kamsar/Unicorn) is a cool (de)serialization utility and it's quite optimized for performance. However, it's not performing very well when filling 'empty' Sitecore databases. This is not Unicorn's fault, but the issue of the underlying item API. 
 
 Because filling 'empty' Sitecore databases is typically something we do **very often**, we created, with directions of [kamsar](https://github.com/kamsar), a drop-in integration for Unicorn. Which, in our tests, is faster than the default implementation in all our cases.
+
+How to get started?
+* Install nuget package [Unicorn.DataBlaster]()
+* Add a configuration file: App_Config/Unicorn/Unicorn.DataBlaster.config
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration xmlns:patch="http://www.sitecore.net/xmlconfig/">
+	<sitecore>
+        <settings>
+            <!-- Set this flag to disable the data blaster integration and fallback to 'regular' Unicorn. 
+                 If you want to temporarily disable the data blaster, you can do the following: 
+                    var helper = new SerializationHelper();
+			        helper.PipelineArgumentData[UnicornDataBlaster.PipelineArgsParametersKey] =
+		                new ExtendedDataBlasterParameters { DisableDataBlaster = true };
+                    helper.SyncConfigurations(...);
+                -->
+            <setting name="Unicorn.DisableDataBlaster" value="false" />
+        </settings>
+		<pipelines>
+		    <unicornSyncStart>
+		        <processor type="Unicorn.DataBlaster.Sync.UnicornDataBlaster, Unicorn.DataBlaster">
+		            <patch:add />
+		        </processor>
+
+                <!-- Set this flag to false to enable updating the history engine. -->
+                <SkipHistoryEngine>true</SkipHistoryEngine>
+
+                <!-- Set this flag to false to update the global publish queue for incremental publishes. -->
+                <SkipPublishQueue>true</SkipPublishQueue>
+
+                <!-- Set this flag to true, to skip updating the link database. 
+                        The link database will be updated for all configs when there's at least one config set to update the link database. -->
+                <SkipLinkDatabase>false</SkipLinkDatabase>
+
+                <!-- Set this flag to true, to skip updating the indexes. 
+                        The indexes will be updated for all configs when there's at least one config set to update the indexes. -->
+                <SkipIndexes>false</SkipIndexes>
+		    </unicornSyncStart>
+		</pipelines>
+	</sitecore>
+</configuration>
+```
+
+## Questions, suggestions?
+Feel free to post an issue or a PR ;)

@@ -23,12 +23,5 @@
         <dependencies>
             <dependency id="Sitecore.DataBlaster" version="$GitVersion_NuGetVersion$" />
         </dependencies>
-
-        <contentFiles>
-            <files include="App_Config\**\*" />
-        </contentFiles>
     </metadata>
-    <files>
-        <file src="App_Config\**\*" target="content" />
-    </files>
 </package>
