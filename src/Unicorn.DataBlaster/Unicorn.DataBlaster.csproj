@@ -88,6 +88,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Config\Unicorn\Unicorn.DataBlaster.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="NuGetReferenceHintPathRewrite.targets" />
     <None Include="packages.config" />
     <None Include="Unicorn.DataBlaster.nuspec" />

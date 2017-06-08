@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using log4net.spi;
 using Sitecore.Configuration;
 using Sitecore.DataBlaster.Load;
 using Sitecore.DataBlaster.Load.Processors;
 using Sitecore.DataBlaster.Util;
 using Sitecore.Diagnostics;
-using Sitecore.Globalization;
 using Sitecore.Pipelines;
 using Unicorn.Configuration;
 using Unicorn.DataBlaster.Logging;
