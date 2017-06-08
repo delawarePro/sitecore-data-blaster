@@ -28,4 +28,7 @@
             <files include="App_Config\**\*" />
         </contentFiles>
     </metadata>
+    <files>
+        <file src="App_Config\**\*" target="content" />
+    </files>
 </package>
