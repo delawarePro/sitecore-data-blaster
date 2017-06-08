@@ -28,10 +28,10 @@ The data blaster stores everything in the database in native Sitecore format and
 
 There's still **one thing not supported yet**, which is updating the event queue. This is typically only important when you have multiple content management nodes. **However** we have an alpha version implementation that will follow soon. 
 
-## I don't find any automated tests! Are you kidding me?
+## I don't find any automated tests, are you kidding me!?
 The automated tests are not located in this repository, because we need a more elaborate setup, but we run over **65 automated tests** on a real Sitecore database on every checkin.
 
 ## Unicorn you said?
-[Unicorn](https://github.com/kamsar/Unicorn) is a cool (de)serialization utility and it's quite optimized for performance. However, it's not performing very well when filling 'empty' Sitecore databases. This is not Unicorn's fault, but the issue with the underlying item API. 
+[Unicorn](https://github.com/kamsar/Unicorn) is a cool (de)serialization utility and it's quite optimized for performance. However, it's not performing very well when filling 'empty' Sitecore databases. This is not Unicorn's fault, but the issue of the underlying item API. 
 
 Because filling 'empty' Sitecore databases is typically something we do **very often**, we created, with directions of [kamsar](https://github.com/kamsar), a drop-in integration for Unicorn. Which, in our tests, is faster than the default implementation in all our cases.
