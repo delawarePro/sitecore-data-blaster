@@ -85,13 +85,20 @@ namespace Unicorn.DataBlaster.Sync
 
 		public virtual void Process(UnicornSyncStartPipelineArgs args)
 		{
-			// Is DataBlaster disabled through config?
-			if (Settings.GetBoolSetting(DisableDataBlasterSettingName, false)) return;
-
-			// Is DataBlaster disabled through parameters.
+			// Find optional data blaster parameters in custom data of arguments.
 			object parms;
 			args.CustomData.TryGetValue(PipelineArgsParametersKey, out parms);
-			var parameters = parms as DataBlasterParameters ?? new DataBlasterParameters();
+			var parameters = parms as DataBlasterParameters;
+			if (parameters == null)
+			{
+				// Is DataBlaster disabled through config?
+				if (Settings.GetBoolSetting(DisableDataBlasterSettingName, false)) return;
+
+				// Use default parameters.
+				parameters = new DataBlasterParameters();
+			}
+
+			// Is DataBlaster disabled through parameters?
 			if (parameters.DisableDataBlaster) return;
 
 			var logger = args.Logger;
@@ -104,8 +111,11 @@ namespace Unicorn.DataBlaster.Sync
 				var configs = args.Configurations;
 
 				LoadItems(configs, parameters, args.Logger);
-				ClearCaches();
 				logger.Info($"Extracted and loaded items ({(int)watch.Elapsed.TotalMilliseconds}ms)");
+
+				watch.Restart();
+				ClearCaches();
+				logger.Info($"Caches cleared ({(int)watch.Elapsed.TotalMilliseconds}ms)");
 
 				// All configurations have been synced, run complete pipelines to support post-processing, e.g. users and roles.
 				watch.Restart();
@@ -113,11 +123,11 @@ namespace Unicorn.DataBlaster.Sync
 				{
 					CorePipeline.Run("unicornSyncComplete", new UnicornSyncCompletePipelineArgs(config, startTimestamp));
 				}
+				logger.Info($"Ran sync complete pipelines ({(int)watch.Elapsed.TotalMilliseconds}ms)");
 
 				// When we tell Unicorn that sync is handled, end pipeline is not called anymore.
 				CorePipeline.Run("unicornSyncEnd", new UnicornSyncEndPipelineArgs(args.Logger, true, configs));
-
-				logger.Info($"Post-processing done ({(int)watch.Elapsed.TotalMilliseconds}ms)");
+				logger.Info($"Ran sync end pipeline ({(int)watch.Elapsed.TotalMilliseconds}ms)");
 			}
 			catch (Exception ex)
 			{
@@ -171,7 +181,9 @@ namespace Unicorn.DataBlaster.Sync
 					cacheUtil.ClearLanguageCache(x);
 				});
 			Sitecore.Caching.CacheManager.ClearAllCaches();
-			Translate.ResetCache();
+
+			// Slow as hell, most people don't use it.
+			//Translate.ResetCache();
 		}
 
 		protected virtual BulkLoadContext CreateBulkLoadContext(BulkLoader bulkLoader, string databaseName,

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Rainbow.Model;
 using Sitecore;
@@ -13,14 +12,6 @@ namespace Unicorn.DataBlaster.Sync
 	/// </summary>
 	public class ItemMapper
 	{
-		private static readonly HashSet<Guid> BlobFields = new HashSet<Guid>(
-			new[]
-			{
-				Guid.Parse("{FF8A2D01-8A77-4F1B-A966-65806993CD31}"),
-				Guid.Parse("{40E50ED9-BA07-4702-992E-A912738D32DC}"),
-				Guid.Parse("{DBBE7D99-1388-4357-BB34-AD71EDF18ED3}")
-			});
-
 		public virtual BulkLoadItem ToBulkLoadItem(IItemData itemData, BulkLoadContext context, BulkLoadAction loadAction)
 		{
 			if (itemData == null) throw new ArgumentNullException(nameof(itemData));
@@ -67,9 +58,9 @@ namespace Unicorn.DataBlaster.Sync
 		protected virtual void AddSyncField(BulkLoadContext context, BulkLoadItem bulkItem, IItemFieldValue itemField, string language = null, int versionNumber = 1)
 		{
 			var fieldId = itemField.FieldId;
-			var isBlob = BlobFields.Contains(fieldId);
 			var fieldValue = itemField.Value;
 			var fieldName = itemField.NameHint;
+			var isBlob = itemField.BlobId.HasValue;
 
 			Func<Stream> blob = null;
 			if (isBlob)
@@ -88,9 +79,8 @@ namespace Unicorn.DataBlaster.Sync
 				}
 				blob = () => new MemoryStream(blobBytes);
 
-				// Field value should contain blob id, but we don't know the blob id for serialized items.
-				// Leave empty and let 'SplitTempTable' sql script find existing blob ids.
-				fieldValue = null;
+				// Field value needs to be set to the blob id.
+				fieldValue = itemField.BlobId.Value.ToString("B").ToUpper();
 			}
 
 			if (language == null)

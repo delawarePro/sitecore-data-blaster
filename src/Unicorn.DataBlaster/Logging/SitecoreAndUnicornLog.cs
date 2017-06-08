@@ -4,6 +4,9 @@ using log4net.spi;
 
 namespace Unicorn.DataBlaster.Logging
 {
+	/// <summary>
+	/// Logs both to standard log4net target and Unicorn target.
+	/// </summary>
     public class SitecoreAndUnicornLog : ILog
     {
 	    private readonly Unicorn.Logging.ILogger _unicornLogger;
