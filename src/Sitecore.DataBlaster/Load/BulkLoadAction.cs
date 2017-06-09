@@ -13,7 +13,7 @@ namespace Sitecore.DataBlaster.Load
 		AddItemOnly = 6, // Keep original numbering for backwards compatibility.
 
         /// <summary>
-        /// Adds items and adds missing fields, and updates fields for which the data is different.
+        /// Adds items, missing fields to existing items and updates/overwrites fields for which the data is different.
         /// </summary>
         Update = 1,
 
@@ -28,11 +28,11 @@ namespace Sitecore.DataBlaster.Load
         /// </summary>
         Revert = 3,
 
-        /// <summary>
-        /// Reverts items to the provided state, removing redundant fields as well.
-        /// Removes children that are not provided in the dataset.
-        /// </summary>
-        RevertTree = 4
+		/// <summary>
+		/// Reverts items to the provided state, removing redundant fields as well.
+		/// Removes descendants that are not provided in the dataset.
+		/// </summary>
+		RevertTree = 4
 
         //Delete (todo)
     }

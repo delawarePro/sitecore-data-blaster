@@ -13,7 +13,7 @@ A stream (IEnumerable) of items is bulk copied (SqlBulkCopy) into a temp table a
 First of all, the database schema hasn't changed significantly in ages. We've been running these scripts from Sitecore 7.1 onwards. Second, database schema changes will have quite some impact on Sitecore as well, so they'll probably be quite careful with this.
 
 ## Are you sure? Is this proven technology?
-We, at [delaware digital](http://digital.delawareconsulting.com), successfully use this approach for a **couple of years** now. Our own serialization tools were build on this library. By using this approach in a specific project, our deserialization time decreased from arround **50+ minutes to less than 1 minute**.
+We, at [delaware digital](http://digital.delawareconsulting.com), successfully use this approach for a **couple of years** now. Our own serialization tools were built on this library. By using this approach in a specific project, our deserialization time decreased from arround **50+ minutes to less than 1 minute**.
 
 Next to that, we are strong believers in continuous integration and continous delivery, so **automated testing is crucial** for us. Without this library, automated **integration, web and smoke tests wouldn't really be feasable** on the large projects that we're building and supporting.
 
@@ -37,46 +37,110 @@ The automated tests are not located in this repository, because we need a more e
 Because filling 'empty' Sitecore databases is typically something we do **very often**, we created, with directions of [kamsar](https://github.com/kamsar), a drop-in integration for Unicorn. Which, in our tests, is faster than the default implementation in all our cases.
 
 How to get started?
-* Install nuget package [Unicorn.DataBlaster]()
+* Install nuget package [Unicorn.DataBlaster](https://www.nuget.org/packages/Unicorn.DataBlaster/)
 * Add a configuration file: App_Config/Unicorn/Unicorn.DataBlaster.config
 ```xml
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration xmlns:patch="http://www.sitecore.net/xmlconfig/">
-	<sitecore>
-        <settings>
-            <!-- Set this flag to disable the data blaster integration and fallback to 'regular' Unicorn. 
+  <sitecore>
+    <settings>
+      <!-- Set this flag to disable the data blaster integration and fallback to 'regular' Unicorn. 
                  If you want to temporarily disable the data blaster, you can do the following: 
                     var helper = new SerializationHelper();
-			        helper.PipelineArgumentData[UnicornDataBlaster.PipelineArgsParametersKey] =
+                    helper.PipelineArgumentData[UnicornDataBlaster.PipelineArgsParametersKey] =
 		                new ExtendedDataBlasterParameters { DisableDataBlaster = true };
                     helper.SyncConfigurations(...);
                 -->
-            <setting name="Unicorn.DisableDataBlaster" value="false" />
-        </settings>
-		<pipelines>
-		    <unicornSyncStart>
-		        <processor type="Unicorn.DataBlaster.Sync.UnicornDataBlaster, Unicorn.DataBlaster">
-		            <patch:add />
-		        </processor>
-
-                <!-- Set this flag to false to enable updating the history engine. -->
-                <SkipHistoryEngine>true</SkipHistoryEngine>
-
-                <!-- Set this flag to false to update the global publish queue for incremental publishes. -->
-                <SkipPublishQueue>true</SkipPublishQueue>
-
-                <!-- Set this flag to true, to skip updating the link database. 
-                        The link database will be updated for all configs when there's at least one config set to update the link database. -->
-                <SkipLinkDatabase>false</SkipLinkDatabase>
-
-                <!-- Set this flag to true, to skip updating the indexes. 
-                        The indexes will be updated for all configs when there's at least one config set to update the indexes. -->
-                <SkipIndexes>false</SkipIndexes>
-		    </unicornSyncStart>
-		</pipelines>
-	</sitecore>
+      <setting name="Unicorn.DisableDataBlaster" value="false" />
+    </settings>
+    <pipelines>
+      <unicornSyncStart>
+        <processor type="Unicorn.DataBlaster.Sync.UnicornDataBlaster, Unicorn.DataBlaster">
+          <patch:add />
+        </processor>
+        <!-- Set this flag to false to enable updating the history engine. -->
+        <SkipHistoryEngine>true</SkipHistoryEngine>
+        <!-- Set this flag to false to update the global publish queue for incremental publishes. -->
+        <SkipPublishQueue>true</SkipPublishQueue>
+        <!-- Set this flag to true, to skip updating the link database. 
+                                The link database will be updated for all configs when there's at least one config set to update the link database. -->
+        <SkipLinkDatabase>false</SkipLinkDatabase>
+        <!-- Set this flag to true, to skip updating the indexes. 
+                                The indexes will be updated for all configs when there's at least one config set to update the indexes. -->
+        <SkipIndexes>false</SkipIndexes>
+      </unicornSyncStart>
+    </pipelines>
+  </sitecore>
 </configuration>
 ```
 
-## Questions, suggestions?
+## How do I use it programmatically?
+I thought you'd never ask. Let's do a quick intro of the core classes first.
+* [BulkLoader](https://github.com/delawarePro/sitecore-data-blaster/blob/master/src/Sitecore.DataBlaster/Load/BulkLoader.cs): core of the bulk load process.
+* [BulkLoadContext](https://github.com/delawarePro/sitecore-data-blaster/blob/master/src/Sitecore.DataBlaster/Load/BulkLoadContext.cs): context object that supports load options and tracking.
+* [BulkLoadItem](https://github.com/delawarePro/sitecore-data-blaster/blob/master/src/Sitecore.DataBlaster/Load/BulkLoadItem.cs): Item representation with its fields and load behavior.
+
+You can clone/fork this repository or you could use a NuGet package: [Sitecore.DataBlaster](https://www.nuget.org/packages/Sitecore.DataBlaster/)
+
+### Let's create a simple item.
+```cs
+// Get standard Sitecore refrences.
+var masterDb = Factory.GetDatabase("master");
+var contentItem = masterDb.GetItem("/sitecore/content");
+var folderTemplate = TemplateManager.GetTemplate(TemplateIDs.Folder, masterDb);
+
+// Create a new folder as child of the content item with the data blaster.
+var bulkLoader = new BulkLoader();
+var context = BulkLoader.NewBulkLoadContext(masterDb.Name);
+bulkLoader.LoadItems(context, new[]
+{
+    new BulkLoadItem(BulkLoadAction.Update, folderTemplate, contentItem, "New Folder")
+});
+```
+### BulkLoadAction
+One of the most important parts is choosing the right bulk load action per item:
+```cs
+public enum BulkLoadAction
+{
+    /// <summary>
+    /// Adds items and adds missing fields, but doesn't update any fields.
+    /// </summary>
+    AddOnly = 0,
+
+    /// <summary>
+    /// Only adds items that don't exist yet, does NOT add missing fields to existing items.
+    /// </summary>
+    AddItemOnly = 6,
+
+    /// <summary>
+    /// Adds items, missing fields to existing items and updates/overwrites fields for which the data is different.
+    /// </summary>
+    Update = 1,
+
+    /// <summary>
+    /// Adds and updates fields for existing items only.
+    /// </summary>
+    UpdateExistingItem = 2,
+
+    /// <summary>
+    /// Reverts items to the provided state, removing redundant fields as well.
+    /// Does NOT remove children that are not provided in the dataset.
+    /// </summary>
+    Revert = 3,
+
+    /// <summary>
+    /// Reverts items to the provided state, removing redundant fields as well.
+    /// Removes descendants that are not provided in the dataset.
+    /// </summary>
+    RevertTree = 4
+}
+```
+
+### Other stuff
+A lot of options and combinations are available. You can e.g. use the item path to lookup an id of item in the database. This can particulary be useful when importing data for which you don't know the item id in Sitecore.
+
+### Debugging
+A lot of the logic is implemented in SQL scripts, which are not easy to debug. For this purpose, there's a 'StageDataWithoutProcessing' flag on the bulk load context. In that case, all data will be staged in a table called 'tmp_BulkItemsAndFields'. After that you can execute the SQL scripts one by one, as long as you replace '#' with 'tmp_'.
+
+## Questions, suggestions and bugs?
 Feel free to post an issue or a PR ;)

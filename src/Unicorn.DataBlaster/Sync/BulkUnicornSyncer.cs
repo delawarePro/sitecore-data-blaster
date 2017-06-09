@@ -73,12 +73,6 @@ namespace Unicorn.DataBlaster.Sync
 		{
 			BulkLoader = bulkLoader ?? new BulkLoader();
 			ItemExtractor = itemExtractor ?? new ItemExtractor();
-
-			// Unicorn should already provide bucketed items.
-			BulkLoader.OnItemProcessing.Remove<ItemBucketer>();
-
-			// Unicorn should not supply duplicates.
-			//BulkLoader.OnStagedDataValidating.Remove<ValidateNoDuplicates>();
 		}
 
 		public virtual void Process(UnicornSyncStartPipelineArgs args)

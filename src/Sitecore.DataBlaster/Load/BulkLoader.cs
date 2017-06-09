@@ -20,8 +20,6 @@ namespace Sitecore.DataBlaster.Load
 {
     public class BulkLoader
     {
-	    protected BulkReader BulkReader { get; }
-
 	    /// <summary>
 		/// Allows reading and modifying the stream of bulk items.
 		/// </summary>
@@ -48,10 +46,8 @@ namespace Sitecore.DataBlaster.Load
 		/// </summary>
 		public Chain<IChangeProcessor> OnItemsLoaded { get; }
 
-        public BulkLoader(BulkReader bulkReader = null)
+        public BulkLoader()
         {
-	        BulkReader = bulkReader ?? new BulkReader();
-
 	        var itemValidator = new ItemValidator();
 	        var itemLinker = new ItemLinker();
 
