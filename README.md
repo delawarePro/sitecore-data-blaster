@@ -139,6 +139,10 @@ public enum BulkLoadAction
 ### Other stuff
 A lot of options and combinations are available. You can e.g. use the item path to lookup an id of item in the database. This can particulary be useful when importing data for which you don't know the item id in Sitecore.
 
+Another feature worth mentioning is 'FieldRules' on the bulk load context, which allows you to exclude specific Sitecore fields from the bulk load process.
+
+If you need more information, please feel free to post an issue.
+
 ### Debugging
 A lot of the logic is implemented in SQL scripts, which are not easy to debug. For this purpose, there's a 'StageDataWithoutProcessing' flag on the bulk load context. In that case, all data will be staged in a table called 'tmp_BulkItemsAndFields'. After that you can execute the SQL scripts one by one, as long as you replace '#' with 'tmp_'.
 

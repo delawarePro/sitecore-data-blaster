@@ -1,0 +1,6 @@
+mode: ContinuousDeployment
+branches:
+  develop:
+    tag: ci
+ignore:
+  sha: []
