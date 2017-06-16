@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using Sitecore.Configuration;
 using Sitecore.DataBlaster.Load;
-using Sitecore.DataBlaster.Load.Processors;
 using Sitecore.DataBlaster.Util;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines;
@@ -93,37 +92,26 @@ namespace Unicorn.DataBlaster.Sync
 			// Is DataBlaster disabled through parameters?
 			if (parameters.DisableDataBlaster) return;
 
-			var logger = args.Logger;
 			try
 			{
-				logger.Info($"Start Bulk Unicorn Sync for configurations: '{string.Join("', '", args.Configurations.Select(x => x.Name))}'.");
+				args.Logger.Info($"Start Bulk Unicorn Sync for configurations: '{string.Join("', '", args.Configurations.Select(x => x.Name))}'.");
 
 				var watch = Stopwatch.StartNew();
 				var startTimestamp = DateTime.Now;
-				var configs = args.Configurations;
 
-				LoadItems(configs, parameters, args.Logger);
-				logger.Info($"Extracted and loaded items ({(int)watch.Elapsed.TotalMilliseconds}ms)");
+				LoadItems(args.Configurations, parameters, args.Logger);
+				args.Logger.Info($"Extracted and loaded items ({(int)watch.Elapsed.TotalMilliseconds}ms)");
 
 				watch.Restart();
 				ClearCaches();
-				logger.Info($"Caches cleared ({(int)watch.Elapsed.TotalMilliseconds}ms)");
+				args.Logger.Info($"Caches cleared ({(int)watch.Elapsed.TotalMilliseconds}ms)");
 
-				// All configurations have been synced, run complete pipelines to support post-processing, e.g. users and roles.
-				watch.Restart();
-				foreach (var config in configs)
-				{
-					CorePipeline.Run("unicornSyncComplete", new UnicornSyncCompletePipelineArgs(config, startTimestamp));
-				}
-				logger.Info($"Ran sync complete pipelines ({(int)watch.Elapsed.TotalMilliseconds}ms)");
-
-				// When we tell Unicorn that sync is handled, end pipeline is not called anymore.
-				CorePipeline.Run("unicornSyncEnd", new UnicornSyncEndPipelineArgs(args.Logger, true, configs));
-				logger.Info($"Ran sync end pipeline ({(int)watch.Elapsed.TotalMilliseconds}ms)");
+				ExecuteUnicornSyncComplete(args, parameters, startTimestamp);
+				ExecuteUnicornSyncEnd(args, parameters);
 			}
 			catch (Exception ex)
 			{
-				logger.Error(ex);
+				args.Logger.Error(ex);
 				throw;
 			}
 			finally
@@ -176,6 +164,30 @@ namespace Unicorn.DataBlaster.Sync
 
 			// Slow as hell, most people don't use it.
 			//Translate.ResetCache();
+		}
+
+		protected virtual void ExecuteUnicornSyncComplete(UnicornSyncStartPipelineArgs args, DataBlasterParameters parameters, 
+			DateTime syncStartTimestamp)
+		{
+			if (parameters.SkipUnicornSyncComplete) return;
+
+			// Run complete pipelines to support post-processing, e.g. users and roles.
+			var watch = Stopwatch.StartNew();
+			foreach (var config in args.Configurations)
+			{
+				CorePipeline.Run("unicornSyncComplete", new UnicornSyncCompletePipelineArgs(config, syncStartTimestamp));
+			}
+			args.Logger.Info($"Ran sync complete pipelines ({(int)watch.Elapsed.TotalMilliseconds}ms)");
+		}
+
+		protected virtual void ExecuteUnicornSyncEnd(UnicornSyncStartPipelineArgs args, DataBlasterParameters parameters)
+		{
+			if (parameters.SkipUnicornSyncEnd) return;
+
+			// When we tell Unicorn that sync is handled, end pipeline is not called anymore.
+			var watch = Stopwatch.StartNew();
+			CorePipeline.Run("unicornSyncEnd", new UnicornSyncEndPipelineArgs(args.Logger, true, args.Configurations));
+			args.Logger.Info($"Ran sync end pipeline ({(int)watch.Elapsed.TotalMilliseconds}ms)");
 		}
 
 		protected virtual BulkLoadContext CreateBulkLoadContext(BulkLoader bulkLoader, string databaseName,
