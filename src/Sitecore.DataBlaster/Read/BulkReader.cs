@@ -73,8 +73,11 @@ namespace Sitecore.DataBlaster.Read
 
 	        using (var conn = GetSqlConnection(item.Database, open: true))
 	        {
-		        return GetDescendantHeaders(new SqlContext(conn, typeof(BulkReader)), 
-					item.ID.Guid, item.Paths.Path, ofTemplates, modifiedSince);
+		        foreach (var header in GetDescendantHeaders(new SqlContext(conn, typeof(BulkReader)),
+			        item.ID.Guid, item.Paths.Path, ofTemplates, modifiedSince))
+		        {
+			        yield return header;
+		        }
 	        }
         }
 
@@ -147,8 +150,11 @@ namespace Sitecore.DataBlaster.Read
 
 		    using (var conn = GetSqlConnection(item.Database, open: true))
 		    {
-			    return GetDescendantVersionHeaders(new SqlContext(conn, typeof(BulkReader)), 
-					item.ID.Guid, item.Paths.Path, ofTemplates, itemModifiedSince, itemVersionModifiedSince);
+			    foreach (var header in GetDescendantVersionHeaders(new SqlContext(conn, typeof(BulkReader)),
+				    item.ID.Guid, item.Paths.Path, ofTemplates, itemModifiedSince, itemVersionModifiedSince))
+			    {
+				    yield return header;
+			    }
 		    }
 	    }
 
@@ -236,8 +242,11 @@ namespace Sitecore.DataBlaster.Read
 
 		    using (var conn = GetSqlConnection(item.Database, open: true))
 		    {
-			    return GetDescendants(new SqlContext(conn, typeof(BulkReader)), 
-					item.ID.Guid, item.Paths.Path, ofTemplates, modifiedSince, onlyPublishable);
+			    foreach (var descendant in GetDescendants(new SqlContext(conn, typeof(BulkReader)),
+				    item.ID.Guid, item.Paths.Path, ofTemplates, modifiedSince, onlyPublishable))
+			    {
+				    yield return descendant;
+			    }
 		    }
 	    }
 
