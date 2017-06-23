@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.DataBlaster.Load.Sql;
@@ -35,7 +36,13 @@ namespace Sitecore.DataBlaster.Load.Processors
         {
             if (itemChanges == null) yield break;
 
-            foreach (var itemChange in itemChanges)
+            // Since we don't include the language in the cache clear entries,
+            // we should de-duplicate the ItemChanges by language first to avoid duplicate cache clear entries.
+            // Result should be one cache-clear entry per Item, not per ItemChange.
+            var seenKeys = new HashSet<string>();
+            var filteredItemChanges = itemChanges.Where(x => seenKeys.Add($"{x.ItemId}{x.ParentId}{x.OriginalParentId}{x.ItemPath}"));
+
+            foreach (var itemChange in filteredItemChanges)
             {
                 yield return new Tuple<ID, ID, string>(ID.Parse(itemChange.ItemId), ID.Parse(itemChange.ParentId), itemChange.ItemPath);
 
