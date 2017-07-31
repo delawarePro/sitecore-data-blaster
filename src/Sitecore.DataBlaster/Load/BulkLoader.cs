@@ -394,7 +394,7 @@ namespace Sitecore.DataBlaster.Load
                         fieldAction = BulkLoadAction.AddOnly;
                         break;
 					case BulkLoadAction.AddItemOnly:
-						fieldAction = BulkLoadAction.AddOnly;
+						fieldAction = BulkLoadAction.AddItemOnly;
 						break;
 					case BulkLoadAction.Update:
                         fieldAction = BulkLoadAction.Update;

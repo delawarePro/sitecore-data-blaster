@@ -40,6 +40,13 @@ DECLARE @ItemChanges TABLE
     NewParentId UNIQUEIDENTIFIER,
 	OldName NVARCHAR(256)
 )
+
+-- Handle AddItemOnly as AddOnly for items that don't exist, so that all fields will be added when necessary.
+DELETE si FROM #SyncItems si JOIN Items i ON i.ID = si.Id WHERE si.Action = 'AddItemOnly'
+UPDATE #SyncItems SET Action = 'AddOnly' WHERE Action = 'AddItemOnly'
+DELETE bif FROM #BulkItemsAndFields bif JOIN Items i ON i.ID = bif.ItemId WHERE bif.FieldAction = 'AddItemOnly'
+UPDATE #BulkItemsAndFields SET ItemAction = 'AddOnly' WHERE FieldAction = 'AddItemOnly'
+
 MERGE 
 	Items AS target
 USING 
@@ -73,22 +80,14 @@ DELETE sf
 FROM #BulkItemsAndFields sf
     JOIN #SyncItems si ON si.Id = sf.ItemId
     LEFT JOIN Items i ON i.ID = si.Id
-WHERE (si.Action = 'AddItemOnly' OR si.Action = 'UpdateExistingItem')
+WHERE si.Action = 'UpdateExistingItem'
     AND i.ID IS NULL
 
 DELETE si
 FROM #SyncItems si
     LEFT JOIN Items i ON i.ID = si.Id
-WHERE (si.Action = 'AddItemOnly' OR si.Action = 'UpdateExistingItem')
+WHERE si.Action = 'UpdateExistingItem'
     AND i.ID IS NULL
-
-DELETE bif
-FROM #BulkItemsAndFields bif
-    JOIN Items i ON i.ID = bif.ItemId
-	LEFT JOIN Fields f ON f.ItemId = bif.ItemId AND f.FieldId = bif.FieldId
-WHERE bif.ItemAction = 'AddItemOnly'
-	AND i.ID IS NOT NULL
-	AND f.ID IS NULL
 
 
 -- Detect created items.
