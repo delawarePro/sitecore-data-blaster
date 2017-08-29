@@ -24,7 +24,7 @@ namespace Unicorn.DataBlaster.Sync
 				itemData.BranchId,
 				itemData.ParentId,
 				itemData.Path,
-				sourceInfo: $"IItemData.dbName={itemData.DatabaseName}");
+				sourceInfo: itemData.SerializedItemId);
 
 			foreach (var sharedField in itemData.SharedFields)
 			{
