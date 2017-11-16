@@ -26,7 +26,9 @@ namespace Sitecore.DataBlaster.Read
 
         protected bool Equals(ItemVersionHeader other)
         {
-            return base.Equals(other) && string.Equals(Language, other.Language, StringComparison.InvariantCultureIgnoreCase) && Version == other.Version;
+            return base.Equals(other) &&
+                   string.Equals(Language, other.Language, StringComparison.InvariantCultureIgnoreCase) &&
+                   Version == other.Version;
         }
 
         public override bool Equals(object obj)

@@ -8,12 +8,12 @@ namespace Sitecore.DataBlaster.Load.Processors
         public void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext)
         {
             if (!loadContext.UpdateHistory.GetValueOrDefault()) return;
-	        if (loadContext.ItemChanges.Count == 0) return;
+            if (loadContext.ItemChanges.Count == 0) return;
 
-			var stopwatch = Stopwatch.StartNew();
+            var stopwatch = Stopwatch.StartNew();
 
             var sql = sqlContext.GetEmbeddedSql(loadContext, "Sql.09.UpdateHistory.sql");
-	        sqlContext.ExecuteSql(sql, 
+            sqlContext.ExecuteSql(sql,
                 commandProcessor: cmd => cmd.Parameters.AddWithValue("@UserName", Sitecore.Context.User.Name));
 
             loadContext.Log.Info($"Updated history: {(int) stopwatch.Elapsed.TotalSeconds}s");

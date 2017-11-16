@@ -8,8 +8,8 @@ namespace Sitecore.DataBlaster.Load.Links
     {
         public BulkLoadAction ItemAction { get; set; }
 
-        public BulkItemLink(string sourceDatabase, ID sourceItemID, ID sourceFieldID, 
-            string targetDatabase, ID targetItemID, string targetPath) 
+        public BulkItemLink(string sourceDatabase, ID sourceItemID, ID sourceFieldID,
+            string targetDatabase, ID targetItemID, string targetPath)
             : base(sourceDatabase, sourceItemID, sourceFieldID, targetDatabase, targetItemID, targetPath)
         {
         }
