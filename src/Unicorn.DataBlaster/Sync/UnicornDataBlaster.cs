@@ -20,7 +20,7 @@ namespace Unicorn.DataBlaster.Sync
 {
 	public class UnicornDataBlaster : IUnicornSyncStartProcessor
 	{
-		public const string DisableDataBlasterSettingName = "Unicorn.DisableDataBlaster";
+		public const string DisableDataBlasterSettingName = "Unicorn.DisableDataBlasterByDefault";
 		public const string PipelineArgsParametersKey = "DataBlaster.Parameters";
 
 		private bool? _isUnicornPublishEnabled;
@@ -76,23 +76,15 @@ namespace Unicorn.DataBlaster.Sync
 
 		public virtual void Process(UnicornSyncStartPipelineArgs args)
 		{
-			// Find optional data blaster parameters in custom data of arguments.
-			object parms;
+		    // Find optional data blaster parameters in custom data of arguments.
+            object parms;
 			args.CustomData.TryGetValue(PipelineArgsParametersKey, out parms);
 			var parameters = parms as DataBlasterParameters;
-			if (parameters == null)
-			{
-				// Is DataBlaster disabled through config?
-				if (Settings.GetBoolSetting(DisableDataBlasterSettingName, false)) return;
 
-				// Use default parameters.
-				parameters = new DataBlasterParameters();
-			}
+            // If not enabled by default, is DataBlaster enabled through parameters?
+            if (Settings.GetBoolSetting(DisableDataBlasterSettingName, false) && (parameters == null || !parameters.EnableDataBlaster)) return;		    
 
-			// Is DataBlaster disabled through parameters?
-			if (parameters.DisableDataBlaster) return;
-
-			try
+            try
 			{
 				args.Logger.Info($"Start Bulk Unicorn Sync for configurations: '{string.Join("', '", args.Configurations.Select(x => x.Name))}'.");
 
