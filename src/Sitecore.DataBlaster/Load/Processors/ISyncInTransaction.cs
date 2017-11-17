@@ -4,6 +4,6 @@ namespace Sitecore.DataBlaster.Load.Processors
 {
     public interface ISyncInTransaction
     {
-	    void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext);
+        void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext);
     }
 }

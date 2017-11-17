@@ -11,7 +11,7 @@ namespace Sitecore.DataBlaster
         public string Language { get; private set; }
 
         internal UnversionedBulkField(BulkItem item, Guid id, string language, string value,
-            Func<Stream> blob = null, bool isBlob = false, string name = null) 
+            Func<Stream> blob = null, bool isBlob = false, string name = null)
             : base(item, id, value, blob, isBlob, name)
         {
             if (language == null) throw new ArgumentNullException("language");

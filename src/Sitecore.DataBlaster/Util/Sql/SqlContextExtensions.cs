@@ -6,13 +6,16 @@ namespace Sitecore.DataBlaster.Util.Sql
 {
     public static class SqlLineExtensions
     {
-        public static IEnumerable<SqlLine> RemoveParameterLineIf(this IEnumerable<SqlLine> sqlLines, Func<bool> predicate, string parameterName)
+        public static IEnumerable<SqlLine> RemoveParameterLineIf(this IEnumerable<SqlLine> sqlLines,
+            Func<bool> predicate, string parameterName)
         {
             return sqlLines
-                .Where(line => !predicate() || line.ToString().IndexOf(parameterName, StringComparison.OrdinalIgnoreCase) < 0);
+                .Where(line =>
+                    !predicate() || line.ToString().IndexOf(parameterName, StringComparison.OrdinalIgnoreCase) < 0);
         }
 
-        public static IEnumerable<SqlLine> ExpandParameterLineIf(this IEnumerable<SqlLine> sqlLines, Func<bool> predicate,
+        public static IEnumerable<SqlLine> ExpandParameterLineIf(this IEnumerable<SqlLine> sqlLines,
+            Func<bool> predicate,
             string parameterName, string parameterValue)
         {
             foreach (var line in sqlLines)
@@ -30,7 +33,8 @@ namespace Sitecore.DataBlaster.Util.Sql
                     continue;
                 }
 
-                yield return line.ToString().Substring(0, pos) + parameterValue + line.ToString().Substring(pos + parameterName.Length);
+                yield return line.ToString().Substring(0, pos) + parameterValue +
+                             line.ToString().Substring(pos + parameterName.Length);
             }
         }
     }

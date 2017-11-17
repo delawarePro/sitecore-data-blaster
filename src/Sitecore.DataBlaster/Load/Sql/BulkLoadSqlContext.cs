@@ -8,12 +8,12 @@ namespace Sitecore.DataBlaster.Load.Sql
 {
     public class BulkLoadSqlContext : SqlContext
     {
-        public BulkLoadSqlContext(SqlConnection connection, Type defaultSubject = null) 
+        public BulkLoadSqlContext(SqlConnection connection, Type defaultSubject = null)
             : base(connection, defaultSubject: defaultSubject)
         {
         }
 
-	    public virtual string GetEmbeddedSql(BulkLoadContext context, string relativePath, Type subject = null)
+        public virtual string GetEmbeddedSql(BulkLoadContext context, string relativePath, Type subject = null)
         {
             return PostProcessSql(context, GetEmbeddedSql(relativePath, subject));
         }

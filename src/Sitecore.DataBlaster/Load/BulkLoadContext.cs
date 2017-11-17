@@ -15,6 +15,7 @@ namespace Sitecore.DataBlaster.Load
     public class BulkLoadContext
     {
         private ILog _log;
+
         public ILog Log
         {
             get { return _log; }
@@ -24,10 +25,11 @@ namespace Sitecore.DataBlaster.Load
                 _log = value;
             }
         }
+
         public string FailureMessage { get; private set; }
 
         public string Database { get; private set; }
-       
+
         /// <summary>
         /// Stages data to temp tables, but don't merge it with existing data.
         /// Useful for debugging.
@@ -72,7 +74,7 @@ namespace Sitecore.DataBlaster.Load
         /// Be aware, this needs to do additional database reads while processing the item stream.
         /// </summary>
         public bool BucketIfNeeded { get; set; }
-        
+
         /// <summary>
         /// Resolves the paths for items in buckets.
         /// </summary>
@@ -93,7 +95,7 @@ namespace Sitecore.DataBlaster.Load
         /// </summary>
         public bool? UpdatePublishQueue { get; set; }
 
-		/// <summary>
+        /// <summary>
         /// Whether to update the link database.
         /// </summary>
         public bool? UpdateLinkDatabase { get; set; }
@@ -120,12 +122,12 @@ namespace Sitecore.DataBlaster.Load
                 if (_allIndexes != null)
                     return _allIndexes;
 
-	            _allIndexes = ContentSearchManager.Indexes
-		            .Where(idx => idx.Crawlers
-			        .OfType<SitecoreItemCrawler>()
-			        .Any(c => Database.Equals(c.Database, StringComparison.OrdinalIgnoreCase)))
-		            .ToList();
-				return _allIndexes;
+                _allIndexes = ContentSearchManager.Indexes
+                    .Where(idx => idx.Crawlers
+                        .OfType<SitecoreItemCrawler>()
+                        .Any(c => Database.Equals(c.Database, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+                return _allIndexes;
             }
             set { _indexesToUpdate = value; }
         }
@@ -144,10 +146,12 @@ namespace Sitecore.DataBlaster.Load
         /// Data is staged in database but no changes are made yet.
         /// </summary>
         public Action<BulkLoadContext> OnDataStaged { get; set; }
+
         /// <summary>
         /// Data is loaded in database.
         /// </summary>
         public Action<BulkLoadContext> OnDataLoaded { get; set; }
+
         /// <summary>
         /// Data is indexed.
         /// </summary>
@@ -187,7 +191,7 @@ namespace Sitecore.DataBlaster.Load
             // Only rebuild when index is not empty
             return searchIndex.Summary.NumberOfDocuments > 0;
         }
-        
+
         #region Stage results and feedback
 
         private readonly Dictionary<Stage, StageResult> _stageResults = new Dictionary<Stage, StageResult>();
@@ -216,7 +220,7 @@ namespace Sitecore.DataBlaster.Load
                 Log.Fatal(message);
             else
                 Log.Fatal(message +
-                    $"\nException type: {ex.GetType().Name}\nException message: {ex.Message}\nStack trace: {ex.StackTrace}");
+                          $"\nException type: {ex.GetType().Name}\nException message: {ex.Message}\nStack trace: {ex.StackTrace}");
 
             FailureMessage = message;
         }
@@ -252,20 +256,20 @@ namespace Sitecore.DataBlaster.Load
             var templateCache = GetTemplateCache();
             templateCache[item.Id] = item.TemplateId;
 
-			// Cache path.
-	        IDictionary<string, Guid> pathCache = null;
+            // Cache path.
+            IDictionary<string, Guid> pathCache = null;
             if (!string.IsNullOrWhiteSpace(item.ItemPath))
             {
                 pathCache = GetPathCache();
                 pathCache[item.ItemPath] = item.Id;
             }
 
-			// Cache lookup path.
-	        if (!string.IsNullOrWhiteSpace(item.ItemLookupPath))
-	        {
-		        pathCache = pathCache ?? GetPathCache();
-				pathCache[item.ItemLookupPath] = item.Id;
-	        }
+            // Cache lookup path.
+            if (!string.IsNullOrWhiteSpace(item.ItemLookupPath))
+            {
+                pathCache = pathCache ?? GetPathCache();
+                pathCache[item.ItemLookupPath] = item.Id;
+            }
         }
 
         private IDictionary<string, Guid> GetPathCache()
@@ -286,21 +290,22 @@ namespace Sitecore.DataBlaster.Load
 
             var cache = GetPathCache();
             Guid id;
-            return cache.TryGetValue(itemPath, out id) ? id : (Guid?)null;
+            return cache.TryGetValue(itemPath, out id) ? id : (Guid?) null;
         }
 
         public virtual Guid? GetProcessedItemTemplateId(Guid itemId)
         {
             var cache = GetTemplateCache();
             Guid id;
-            return cache.TryGetValue(itemId, out id) ? id : (Guid?)null;
+            return cache.TryGetValue(itemId, out id) ? id : (Guid?) null;
         }
 
         #endregion
 
         #region Additional state
 
-        private readonly Dictionary<string, object> _state = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, object> _state =
+            new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets state from the context.
@@ -317,7 +322,7 @@ namespace Sitecore.DataBlaster.Load
             {
                 return defaultValue;
             }
-            return (T)state;
+            return (T) state;
         }
 
         /// <summary>
@@ -336,7 +341,7 @@ namespace Sitecore.DataBlaster.Load
                 state = stateFactory();
                 _state[key] = state;
             }
-            return (T)state;
+            return (T) state;
         }
 
         #endregion

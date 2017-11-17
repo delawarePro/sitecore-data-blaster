@@ -12,45 +12,45 @@ using Sitecore.DataBlaster.Util.Sql;
 
 namespace Sitecore.DataBlaster.Load.Processors
 {
-	public class ItemLinker : IItemProcessor, IChangeProcessor
-	{
-		private readonly BulkItemLinkParser _itemLinkParser;
+    public class ItemLinker : IItemProcessor, IChangeProcessor
+    {
+        private readonly BulkItemLinkParser _itemLinkParser;
 
-		public ItemLinker(BulkItemLinkParser itemLinkParser = null)
-		{
-			_itemLinkParser = itemLinkParser ?? new BulkItemLinkParser();
-		}
+        public ItemLinker(BulkItemLinkParser itemLinkParser = null)
+        {
+            _itemLinkParser = itemLinkParser ?? new BulkItemLinkParser();
+        }
 
-	    public IEnumerable<BulkLoadItem> Process(BulkLoadContext context, IEnumerable<BulkLoadItem> items)
-	    {
-		    if (!context.UpdateLinkDatabase.GetValueOrDefault()) return items;
+        public IEnumerable<BulkLoadItem> Process(BulkLoadContext context, IEnumerable<BulkLoadItem> items)
+        {
+            if (!context.UpdateLinkDatabase.GetValueOrDefault()) return items;
 
-		    var links = GetItemLinksFromContext(context);
-		    return _itemLinkParser.ExtractLinks(items, context, links);
-	    }
+            var links = GetItemLinksFromContext(context);
+            return _itemLinkParser.ExtractLinks(items, context, links);
+        }
 
-	    public void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext, ICollection<ItemChange> changes)
+        public void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext, ICollection<ItemChange> changes)
         {
             if (!loadContext.UpdateLinkDatabase.GetValueOrDefault()) return;
-	        if (changes.Count == 0) return;
+            if (changes.Count == 0) return;
 
             var stopwatch = Stopwatch.StartNew();
-            
+
             // Update link database, is in core database, so we can't do this within the transaction.
             // Links are detected when reading the bulk item stream, 
             // so we assume that the same set will be presented again after a crash.
             UpdateLinkDatabase(loadContext, sqlContext, GetItemLinksFromContext(loadContext), changes);
 
-            loadContext.Log.Info($"Updated link database: {(int)stopwatch.Elapsed.TotalSeconds}s");
+            loadContext.Log.Info($"Updated link database: {(int) stopwatch.Elapsed.TotalSeconds}s");
         }
 
-		protected virtual LinkedList<BulkItemLink> GetItemLinksFromContext(BulkLoadContext context)
-		{
-			return context.GetOrAddState("Load.ExtractedLinks", () => new LinkedList<BulkItemLink>());
-		}
+        protected virtual LinkedList<BulkItemLink> GetItemLinksFromContext(BulkLoadContext context)
+        {
+            return context.GetOrAddState("Load.ExtractedLinks", () => new LinkedList<BulkItemLink>());
+        }
 
-		protected virtual void UpdateLinkDatabase(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext, 
-			LinkedList<BulkItemLink> links, ICollection<ItemChange> changes)
+        protected virtual void UpdateLinkDatabase(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext,
+            LinkedList<BulkItemLink> links, ICollection<ItemChange> changes)
         {
             // Index all items that were actually changed in db.
             var touchedItemsMap = changes
@@ -88,7 +88,8 @@ namespace Sitecore.DataBlaster.Load.Processors
                     }
                     catch (Exception exception)
                     {
-                        loadContext.StageFailed(Stage.Load, exception, $"Write to #ItemLinks failed with message: {exception.Message}");
+                        loadContext.StageFailed(Stage.Load, exception,
+                            $"Write to #ItemLinks failed with message: {exception.Message}");
                         return;
                     }
                 }
@@ -102,12 +103,14 @@ namespace Sitecore.DataBlaster.Load.Processors
 
             public override int FieldCount => 11;
 
-            [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "Not an issue in this case.")]
+            [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification =
+                "Not an issue in this case.")]
             public ItemLinksReader(Func<IEnumerator<BulkItemLink>> enumerator)
                 : base(enumerator)
             {
                 _fields = new object[FieldCount];
             }
+
             public override bool Read()
             {
                 if (!base.Read())
@@ -120,15 +123,15 @@ namespace Sitecore.DataBlaster.Load.Processors
 
                 _fields[0] = Current.SourceDatabaseName;
                 _fields[1] = Current.SourceItemID.Guid;
-                _fields[2] = (object)Current.SourceItemLanguage?.Name ?? DBNull.Value;
-                _fields[3] = (object)Current.SourceItemVersion?.Number ?? DBNull.Value;
+                _fields[2] = (object) Current.SourceItemLanguage?.Name ?? DBNull.Value;
+                _fields[3] = (object) Current.SourceItemVersion?.Number ?? DBNull.Value;
                 _fields[4] = Current.SourceFieldID.Guid;
 
                 _fields[5] = Current.TargetDatabaseName;
                 _fields[6] = Current.TargetItemID.Guid;
-                _fields[7] = (object)Current.TargetItemLanguage?.Name ?? DBNull.Value;
-                _fields[8] = (object)Current.TargetItemVersion?.Number ?? DBNull.Value;
-                _fields[9] = (object)Current.TargetPath ?? DBNull.Value;
+                _fields[7] = (object) Current.TargetItemLanguage?.Name ?? DBNull.Value;
+                _fields[8] = (object) Current.TargetItemVersion?.Number ?? DBNull.Value;
+                _fields[9] = (object) Current.TargetPath ?? DBNull.Value;
 
                 _fields[10] = Current.ItemAction.ToString();
 
