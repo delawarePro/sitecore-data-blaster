@@ -14,7 +14,7 @@ namespace Sitecore.DataBlaster.Load.Processors
             // In Sitecore 9, history engine is disabled by default
             if (!HistoryEngineEnabled(loadContext))
             {
-                loadContext.Log.Warn($"Skipped updating history because history engine is not enabled");
+                loadContext.Log.Info($"Skipped updating history because history engine is not enabled.");
                 return;
             }
 
