@@ -117,11 +117,11 @@ namespace Unicorn.DataBlaster.Sync
 
             if (bulkItem.GetField(FieldIDs.Updated.Guid, language, versionNumber) == null)
                 bulkItem.AddVersionedField(FieldIDs.Updated.Guid, language, versionNumber, DateUtil.IsoNow, name: "__Updated",
-                    postProcessor: x => x.DependsOnUpdate = true);
+                    postProcessor: x => x.DependsOnCreate = x.DependsOnUpdate = true);
 
             if (bulkItem.GetField(FieldIDs.UpdatedBy.Guid, language, versionNumber) == null)
                 bulkItem.AddVersionedField(FieldIDs.UpdatedBy.Guid, language, versionNumber, user, name: "__Updated by",
-                    postProcessor: x => x.DependsOnUpdate = true);
+                    postProcessor: x => x.DependsOnCreate = x.DependsOnUpdate = true);
         }
     }
 }
