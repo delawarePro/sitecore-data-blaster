@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
-using Rainbow.Model;
+﻿using Rainbow.Model;
 using Sitecore;
 using Sitecore.DataBlaster.Load;
+using System;
+using System.IO;
 using Convert = System.Convert;
 
 namespace Unicorn.DataBlaster.Sync
@@ -101,25 +101,27 @@ namespace Unicorn.DataBlaster.Sync
         {
             var user = Sitecore.Context.User.Name;
 
+            // Make sure revision is updated when item is created or updated so that smart publish works.
+            // Unicorn doesn't track revisions, so we need to generate one ourselves.
+            if (bulkItem.GetField(FieldIDs.Revision.Guid, language, versionNumber) == null)
+                bulkItem.AddVersionedField(FieldIDs.Revision.Guid, language, versionNumber, Guid.NewGuid().ToString("D"), name: "__Revision",
+                    postProcessor: x => x.DependsOnCreate = x.DependsOnUpdate = true);
+
             if (bulkItem.GetField(FieldIDs.Created.Guid, language, versionNumber) == null)
-                bulkItem.AddVersionedField(FieldIDs.Created.Guid, language, versionNumber, DateUtil.IsoNow,
-                    name: "__Created");
+                bulkItem.AddVersionedField(FieldIDs.Created.Guid, language, versionNumber, DateUtil.IsoNow, name: "__Created",
+                    postProcessor: x => x.DependsOnCreate = true);
 
             if (bulkItem.GetField(FieldIDs.CreatedBy.Guid, language, versionNumber) == null)
-                bulkItem.AddVersionedField(FieldIDs.CreatedBy.Guid, language, versionNumber, user,
-                    name: "__Created by");
+                bulkItem.AddVersionedField(FieldIDs.CreatedBy.Guid, language, versionNumber, user, name: "__Created by",
+                    postProcessor: x => x.DependsOnCreate = true);
 
-            if (bulkItem.LoadAction == BulkLoadAction.Update ||
-                bulkItem.LoadAction == BulkLoadAction.UpdateExistingItem)
-            {
-                if (bulkItem.GetField(FieldIDs.UpdatedBy.Guid, language, versionNumber) == null)
-                    bulkItem.AddVersionedField(FieldIDs.UpdatedBy.Guid, language, versionNumber, user,
-                        name: "__Updated");
+            if (bulkItem.GetField(FieldIDs.Updated.Guid, language, versionNumber) == null)
+                bulkItem.AddVersionedField(FieldIDs.Updated.Guid, language, versionNumber, DateUtil.IsoNow, name: "__Updated",
+                    postProcessor: x => x.DependsOnCreate = x.DependsOnUpdate = true);
 
-                if (bulkItem.GetField(FieldIDs.Updated.Guid, language, versionNumber) == null)
-                    bulkItem.AddVersionedField(FieldIDs.Updated.Guid, language, versionNumber, DateUtil.IsoNowWithTicks,
-                        name: "__Updated by");
-            }
+            if (bulkItem.GetField(FieldIDs.UpdatedBy.Guid, language, versionNumber) == null)
+                bulkItem.AddVersionedField(FieldIDs.UpdatedBy.Guid, language, versionNumber, user, name: "__Updated by",
+                    postProcessor: x => x.DependsOnCreate = x.DependsOnUpdate = true);
         }
     }
 }
