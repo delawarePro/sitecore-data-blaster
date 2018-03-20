@@ -130,7 +130,7 @@ namespace Unicorn.DataBlaster.Sync
                 logger.Info($"Syncing database '{databaseName}'...");
 
                 var context = CreateBulkLoadContext(BulkLoader, databaseName, configurations, parameters, logger);
-                var bulkItems = ItemExtractor.ExtractBulkItems(context, configurations, databaseName);
+                var bulkItems = ItemExtractor.ExtractBulkItems(context, parameters, configurations, databaseName);
                 BulkLoader.LoadItems(context, bulkItems);
 
                 if (context.AnyStageFailed)
