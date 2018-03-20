@@ -23,7 +23,7 @@ namespace Unicorn.DataBlaster.Sync
             ItemMapper = itemMapper ?? new ItemMapper();
         }
 
-        public virtual IEnumerable<BulkLoadItem> ExtractBulkItems(BulkLoadContext context,
+        public virtual IEnumerable<BulkLoadItem> ExtractBulkItems(BulkLoadContext context, DataBlasterParameters parameters,
             IConfiguration[] configurations, string database)
         {
             var uniqueItems = new HashSet<Guid>();
@@ -31,7 +31,7 @@ namespace Unicorn.DataBlaster.Sync
             return GetTreeRoots(configurations, database)
                 .SelectMany(tr =>
                 {
-                    var action = GetBulkLoadAction(tr.Item1, tr.Item2);
+                    var action = GetBulkLoadAction(parameters, tr.Item1, tr.Item2);
                     var dataStore = tr.Item1.Resolve<ITargetDataStore>();
 
                     return dataStore.GetByPath(tr.Item2.Path, database)
@@ -67,8 +67,11 @@ namespace Unicorn.DataBlaster.Sync
                     x.TreeRoots.Select(tr => new Tuple<IConfiguration, PresetTreeRoot>(x.Configuration, tr)));
         }
 
-        protected virtual BulkLoadAction GetBulkLoadAction(IConfiguration configuration, PresetTreeRoot treeRoot)
+        protected virtual BulkLoadAction GetBulkLoadAction(DataBlasterParameters parameters, IConfiguration configuration, PresetTreeRoot treeRoot)
         {
+            if (parameters.ForceBulkLoadAction.HasValue)
+                return parameters.ForceBulkLoadAction.Value;
+
             var evaluator = configuration.Resolve<IEvaluator>();
 
             if (evaluator is SerializedAsMasterEvaluator)
