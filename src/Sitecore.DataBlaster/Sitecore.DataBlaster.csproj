@@ -148,9 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="NuGetReferenceHintPathRewrite.targets" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Read\Sql\GetDescendantHeaders.sql" />
