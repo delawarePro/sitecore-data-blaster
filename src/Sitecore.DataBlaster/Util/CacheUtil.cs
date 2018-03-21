@@ -46,11 +46,11 @@ namespace Sitecore.DataBlaster.Util
             //     <setting name="Caching.CacheKeyIndexingEnabled.ItemCache" value="true" />
             //     <setting name="Caching.CacheKeyIndexingEnabled.ItemPathsCache" value="true" />
             //     <setting name="Caching.CacheKeyIndexingEnabled.PathCache" value="true" />
-
+            var maxDegreeOfParallelism = Environment.ProcessorCount > 1 ? Environment.ProcessorCount * 0.666 : 1;
             Parallel.ForEach(itemIdParentIdAndItemPaths,
                 new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = (int) (Environment.ProcessorCount * 0.666)
+                    MaxDegreeOfParallelism = (int) maxDegreeOfParallelism
                 },
                 x => { RemoveItemFromCaches(database, x.Item1, x.Item2, x.Item3); });
         }

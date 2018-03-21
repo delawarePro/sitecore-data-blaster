@@ -160,7 +160,7 @@ namespace Sitecore.DataBlaster.Load
                 catch (Exception ex)
                 {
                     transaction?.Rollback();
-                    context.StageFailed(Stage.Load, ex.Message);
+                    context.StageFailed(Stage.Load, ex, ex.Message);
                 }
                 finally
                 {
