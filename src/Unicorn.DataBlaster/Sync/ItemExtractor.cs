@@ -40,6 +40,7 @@ namespace Unicorn.DataBlaster.Sync
                         // because it has children from different configurations. 
                         // Make sure we add the item itself only once.
                         .Where(item => uniqueItems.Add(item.Id))
+                        .Where(item => string.IsNullOrEmpty(parameters.AncestorFilter) || item.Path.StartsWith(parameters.AncestorFilter, StringComparison.OrdinalIgnoreCase))
                         .Select(y => ItemMapper.ToBulkLoadItem(y, context, action));
                 });
         }

@@ -31,5 +31,12 @@ namespace Unicorn.DataBlaster.Sync
         /// Force this BulkLoadAction to be used during item extraction instead of the BulkLoadAction derived from the configured evaluator.
         /// </summary>
         public BulkLoadAction? ForceBulkLoadAction { get; set; }
+
+        /// <summary>
+        /// Should be null or a Sitecore item path.
+        /// When set, only items that are descendants of the configured path will be loaded during sync (deserialization).
+        /// Useful for e.g. revert tree.
+        /// </summary>
+        public string AncestorFilter { get; set; }
     }
 }
