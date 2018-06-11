@@ -86,6 +86,13 @@ namespace Sitecore.DataBlaster.Load
         public bool RemoveItemsFromCaches { get; set; }
 
         /// <summary>
+        /// Whether to clear the entire caches (<value>true</value>), or to remove impacted cache entries only (<value>false</value>; default).
+        /// When both the imported data set and the Sitecore caches are quite large, there is a performance impact in scanning the caches for entries that must be deleted.
+        /// In this case it could prove more useful to just clear the caches instead of spending time to scan them. The performance impact is then in repopulation, though.
+        /// </summary>
+        public bool ClearEntireCaches { get; set; }
+
+        /// <summary>
         /// Whether to update the history engine of Sitecore. This engine is e.g. used for index syncs.
         /// </summary>
         public bool? UpdateHistory { get; set; }
