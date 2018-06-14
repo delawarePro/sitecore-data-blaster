@@ -83,14 +83,28 @@ namespace Sitecore.DataBlaster.Load
         /// <summary>
         /// Whether to remove updated items from Sitecore caches. Enabled by default.
         /// </summary>
-        public bool RemoveItemsFromCaches { get; set; }
+        public bool UpdateCaches { get; set; }
 
         /// <summary>
-        /// Whether to clear the entire caches (<value>true</value>), or to remove impacted cache entries only (<value>false</value>; default).
-        /// When both the imported data set and the Sitecore caches are quite large, there is a performance impact in scanning the caches for entries that must be deleted.
-        /// In this case it could prove more useful to just clear the caches instead of spending time to scan them. The performance impact is then in repopulation, though.
+        /// This property has been replaced by <see cref="UpdateCaches"/>.
         /// </summary>
-        public bool ClearEntireCaches { get; set; }
+        [Obsolete("Use UpdateCaches instead.", false)]
+        public bool RemoveItemsFromCaches
+        {
+            get { return this.UpdateCaches; }
+            set { this.UpdateCaches = value; }
+        }
+
+        /// <summary>
+        /// If <see cref="UpdateCaches"/> is set to <value>true</value> then this property defines the strategy for removing entries from the cache; otherwise this property has no effect.
+        /// If <value>false</value> (default), only entries for impacted items are removed from the cache. If <value>true</value>, the caches are cleared instead.
+        /// <remarks>
+        /// When both the imported data set and the Sitecore caches are quite large, there is a performance impact in scanning the caches for entries that must be deleted.
+        /// In this case it could prove more useful to just clear the caches, instead of spending time to scan them. The performance impact is then in repopulation, though.
+        /// For settings that have an impact on cache removal performance, see <see cref="Sitecore.Configuration.Settings.Caching.CacheKeyIndexingEnabled"/>.
+        /// </remarks>
+        /// </summary>
+        public bool ClearCaches { get; set; }
 
         /// <summary>
         /// Whether to update the history engine of Sitecore. This engine is e.g. used for index syncs.
@@ -171,7 +185,7 @@ namespace Sitecore.DataBlaster.Load
             if (string.IsNullOrEmpty(database)) throw new ArgumentNullException(nameof(database));
 
             Database = database;
-            RemoveItemsFromCaches = true;
+            UpdateCaches = true;
             UpdateIndexes = true;
 
             Log = LoggerFactory.GetLogger(typeof(BulkLoader));

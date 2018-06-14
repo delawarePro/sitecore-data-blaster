@@ -118,7 +118,7 @@ namespace Sitecore.DataBlaster.Util
             cache.Remove(database.Name);
         }
 
-        public virtual void ClearAllCaches(Database database)
+        public virtual void ClearCaches(Database database)
         {
             if (database == null) throw new ArgumentNullException(nameof(database));
 

@@ -20,16 +20,16 @@ namespace Sitecore.DataBlaster.Load.Processors
 
         public void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext, ICollection<ItemChange> changes)
         {
-            if (!loadContext.RemoveItemsFromCaches) return;
+            if (!loadContext.UpdateCaches) return;
 
             var stopwatch = Stopwatch.StartNew();
 
             // Remove items from database cache.
             // We don't do this within the transaction so that items will be re-read from the committed data.
             var db = Factory.GetDatabase(loadContext.Database, true);
-            if (loadContext.ClearEntireCaches)
+            if (loadContext.ClearCaches)
             {
-                _cachUtil.ClearAllCaches(db);
+                _cachUtil.ClearCaches(db);
                 loadContext.Log.Info($"Caches cleared (full): {(int)stopwatch.Elapsed.TotalSeconds}s");
             }
             else

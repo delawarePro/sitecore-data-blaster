@@ -202,7 +202,7 @@ namespace Unicorn.DataBlaster.Sync
             context.StageDataWithoutProcessing = parameters.StageDataWithoutProcessing;
 
             // Use the shotgun, removing items one by one is too slow for full deserialize.
-            context.RemoveItemsFromCaches = false;
+            context.UpdateCaches = false;
 
             context.UpdateHistory = !SkipHistoryEngine;
             context.UpdatePublishQueue = !SkipPublishQueue;
