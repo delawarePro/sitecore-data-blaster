@@ -20,7 +20,7 @@ namespace Sitecore.DataBlaster.Load.Processors
 
         public void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext, ICollection<ItemChange> changes)
         {
-            if (!loadContext.UpdateCaches) return;
+            if (!loadContext.RemoveItemsFromCaches && !loadContext.ClearCaches) return;
 
             var stopwatch = Stopwatch.StartNew();
 
@@ -30,12 +30,12 @@ namespace Sitecore.DataBlaster.Load.Processors
             if (loadContext.ClearCaches)
             {
                 _cachUtil.ClearCaches(db);
-                loadContext.Log.Info($"Caches cleared (full): {(int)stopwatch.Elapsed.TotalSeconds}s");
+                loadContext.Log.Info($"Caches cleared: {(int)stopwatch.Elapsed.TotalSeconds}s");
             }
             else
             {
                 _cachUtil.RemoveItemsFromCachesInBulk(db, GetCacheClearEntries(loadContext.ItemChanges));
-                loadContext.Log.Info($"Caches cleared: {(int)stopwatch.Elapsed.TotalSeconds}s");
+                loadContext.Log.Info($"Items removed from cache: {(int) stopwatch.Elapsed.TotalSeconds}s");
             }
         }
 
