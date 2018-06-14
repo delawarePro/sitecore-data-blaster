@@ -82,8 +82,19 @@ namespace Sitecore.DataBlaster.Load
 
         /// <summary>
         /// Whether to remove updated items from Sitecore caches. Enabled by default.
+        /// This setting is not impacted by the value of <seealso cref="ClearCaches"/>.
         /// </summary>
         public bool RemoveItemsFromCaches { get; set; }
+
+        /// <summary>
+        /// Offers an alternative strategy to remove items from Sitecore caches, by clearing them completely.
+        /// This setting is not impacted by the value of <seealso cref="RemoveItemsFromCaches"/>.
+        /// 
+        /// When both the imported data set and the Sitecore caches are quite large, there is a performance impact in scanning the caches for entries that must be deleted.
+        /// In this case it could prove more useful to just clear the caches, instead of spending time to scan them. The performance impact is then in repopulation, though.
+        /// For settings that have an impact on cache removal performance, see <see cref="Sitecore.Configuration.Settings.Caching.CacheKeyIndexingEnabled"/>.
+        /// </summary>
+        public bool ClearCaches { get; set; }
 
         /// <summary>
         /// Whether to update the history engine of Sitecore. This engine is e.g. used for index syncs.

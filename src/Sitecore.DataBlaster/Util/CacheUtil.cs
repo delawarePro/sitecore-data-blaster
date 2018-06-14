@@ -117,5 +117,26 @@ namespace Sitecore.DataBlaster.Util
                 true);
             cache.Remove(database.Name);
         }
+
+        public virtual void ClearCaches(Database database)
+        {
+            if (database == null) throw new ArgumentNullException(nameof(database));
+
+            var current = Context.Database;
+            try
+            {
+                // http://www.theinsidecorner.com/en/Developers/Caching/CacheStates/ClearAllCaches
+                // http://stackoverflow.com/questions/3713031/sitecore-clear-cache-programatically
+
+                Context.Database = database;
+                Context.Database.Engines.TemplateEngine.Reset();
+                Context.ClientData.RemoveAll();
+                CacheManager.ClearAllCaches();
+            }
+            finally
+            {
+                if (current != null) Context.Database = current;
+            }
+        }
     }
 }
