@@ -17,8 +17,8 @@ namespace Sitecore.DataBlaster.Util
         public virtual void RemoveItemFromCaches(Database database, ID itemId, ID parentId, string itemPath = null)
         {
             if (database == null) throw new ArgumentNullException(nameof(database));
-            if (itemId == (ID) null) throw new ArgumentNullException(nameof(itemId));
-            if (parentId == (ID) null) throw new ArgumentNullException(nameof(parentId));
+            if (itemId == (ID)null) throw new ArgumentNullException(nameof(itemId));
+            if (parentId == (ID)null) throw new ArgumentNullException(nameof(parentId));
 
             // Parent needs to be cleared because it holds a reference to its children.
             var parentPath = itemPath?.Substring(0, itemPath.LastIndexOf("/", StringComparison.Ordinal));
@@ -50,7 +50,7 @@ namespace Sitecore.DataBlaster.Util
             Parallel.ForEach(itemIdParentIdAndItemPaths,
                 new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = (int) maxDegreeOfParallelism
+                    MaxDegreeOfParallelism = (int)maxDegreeOfParallelism
                 },
                 x => { RemoveItemFromCaches(database, x.Item1, x.Item2, x.Item3); });
         }
@@ -58,7 +58,7 @@ namespace Sitecore.DataBlaster.Util
         protected virtual void RemoveItemFromCaches(Database database, ID itemId, string itemPath = null)
         {
             if (database == null) throw new ArgumentNullException(nameof(database));
-            if (itemId == (ID) null) throw new ArgumentNullException(nameof(itemId));
+            if (itemId == (ID)null) throw new ArgumentNullException(nameof(itemId));
 
             var dbCaches = database.Caches;
 
@@ -80,7 +80,7 @@ namespace Sitecore.DataBlaster.Util
         protected virtual IEnumerable<Item> GetCachedItems(DatabaseCaches caches, ID itemId)
         {
             if (caches == null) throw new ArgumentNullException(nameof(caches));
-            if (itemId == (ID) null) throw new ArgumentNullException(nameof(itemId));
+            if (itemId == (ID)null) throw new ArgumentNullException(nameof(itemId));
 
             var info = caches.DataCache.GetItemInformation(itemId);
             var languages = info?.GetLanguages();

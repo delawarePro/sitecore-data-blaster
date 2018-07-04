@@ -26,7 +26,7 @@ namespace Unicorn.DataBlaster.Sync
         /// Flag to skip post processing of Unicorn like e.g. publishing.
         /// </summary>
         public bool SkipUnicornSyncEnd { get; set; }
-        
+
         /// <summary>
         /// Force this BulkLoadAction to be used during item extraction instead of the BulkLoadAction derived from the configured evaluator.
         /// </summary>

@@ -301,14 +301,14 @@ namespace Sitecore.DataBlaster.Load
 
             var cache = GetPathCache();
             Guid id;
-            return cache.TryGetValue(itemPath, out id) ? id : (Guid?) null;
+            return cache.TryGetValue(itemPath, out id) ? id : (Guid?)null;
         }
 
         public virtual Guid? GetProcessedItemTemplateId(Guid itemId)
         {
             var cache = GetTemplateCache();
             Guid id;
-            return cache.TryGetValue(itemId, out id) ? id : (Guid?) null;
+            return cache.TryGetValue(itemId, out id) ? id : (Guid?)null;
         }
 
         #endregion
@@ -333,7 +333,7 @@ namespace Sitecore.DataBlaster.Load
             {
                 return defaultValue;
             }
-            return (T) state;
+            return (T)state;
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace Sitecore.DataBlaster.Load
                 state = stateFactory();
                 _state[key] = state;
             }
-            return (T) state;
+            return (T)state;
         }
 
         #endregion

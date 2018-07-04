@@ -33,7 +33,7 @@ namespace Sitecore.DataBlaster.Load
             ParentId = record.GetGuid(4);
             OriginalParentId = record.GetGuid(5);
             Language = record.IsDBNull(6) ? null : record.GetString(6);
-            Version = record.IsDBNull(7) ? (int?) null : record.GetInt32(7);
+            Version = record.IsDBNull(7) ? (int?)null : record.GetInt32(7);
             Created = record.IsDBNull(8) ? false : record.GetBoolean(8);
             Saved = record.IsDBNull(9) ? false : record.GetBoolean(9);
             Moved = record.IsDBNull(10) ? false : record.GetBoolean(10);

@@ -24,7 +24,7 @@ namespace Sitecore.DataBlaster.Load.Processors
             sqlContext.ExecuteSql(sql,
                 commandProcessor: cmd => cmd.Parameters.AddWithValue("@UserName", Sitecore.Context.User.Name));
 
-            loadContext.Log.Info($"Updated history: {(int) stopwatch.Elapsed.TotalSeconds}s");
+            loadContext.Log.Info($"Updated history: {(int)stopwatch.Elapsed.TotalSeconds}s");
         }
 
         private bool HistoryEngineEnabled(BulkLoadContext context)

@@ -11,7 +11,6 @@ using Sitecore.Configuration;
 using Sitecore.Data.Managers;
 using Sitecore.DataBlaster.Load.Processors;
 using Sitecore.DataBlaster.Load.Sql;
-using Sitecore.DataBlaster.Read;
 using Sitecore.DataBlaster.Util;
 using Sitecore.DataBlaster.Util.Sql;
 using Sitecore.Events;
@@ -243,7 +242,7 @@ namespace Sitecore.DataBlaster.Load
                     }
                 }
             }
-            loadContext.Log.Info($"Loaded data in database: {(int) stopwatch.Elapsed.TotalSeconds}s");
+            loadContext.Log.Info($"Loaded data in database: {(int)stopwatch.Elapsed.TotalSeconds}s");
             stopwatch.Restart();
             return true;
         }
@@ -275,7 +274,7 @@ namespace Sitecore.DataBlaster.Load
                 sqlContext.ExecuteSql(lookupItemsSql);
             }
 
-            loadContext.Log.Info($"Looked up ids: {(int) stopwatch.Elapsed.TotalSeconds}s");
+            loadContext.Log.Info($"Looked up ids: {(int)stopwatch.Elapsed.TotalSeconds}s");
         }
 
         protected virtual bool ValidateAndPrepareData(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext)
@@ -296,7 +295,7 @@ namespace Sitecore.DataBlaster.Load
             if (!OnTempDataValidating.Execute(p => p.ValidateLoadStage(loadContext, sqlContext), breakOnDefault: true))
                 return false;
 
-            loadContext.Log.Info($"Validated and prepared loaded data: {(int) stopwatch.Elapsed.TotalSeconds}s");
+            loadContext.Log.Info($"Validated and prepared loaded data: {(int)stopwatch.Elapsed.TotalSeconds}s");
             return true;
         }
 
@@ -329,7 +328,7 @@ namespace Sitecore.DataBlaster.Load
                     }
                 }
             }
-            loadContext.Log.Info($"Merged loaded data: {(int) stopwatch.Elapsed.TotalSeconds}s");
+            loadContext.Log.Info($"Merged loaded data: {(int)stopwatch.Elapsed.TotalSeconds}s");
         }
 
         #endregion
@@ -343,7 +342,7 @@ namespace Sitecore.DataBlaster.Load
 
         protected virtual void OnSqlInfoMessage(BulkLoadContext context, object sender, SqlInfoMessageEventArgs args)
         {
-            foreach (var line in args.Message.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var line in args.Message.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
             {
                 context.Log.Debug($"SQL Info: {line}");
             }
@@ -385,7 +384,7 @@ namespace Sitecore.DataBlaster.Load
                     return false;
                 }
 
-                var item = (BulkLoadItem) Current.Item;
+                var item = (BulkLoadItem)Current.Item;
                 ReadItemCount++;
 
                 if (!HasFieldDependencies && (Current.DependsOnCreate || Current.DependsOnUpdate))
@@ -427,27 +426,27 @@ namespace Sitecore.DataBlaster.Load
                 var versioned = Current as VersionedBulkField;
 
                 _fields[0] = Current.Item.Id;
-                _fields[1] = string.IsNullOrEmpty(Current.Item.Name) ? DBNull.Value : (object) Current.Item.Name;
-                _fields[2] = Current.Item.TemplateId != Guid.Empty ? (object) Current.Item.TemplateId : DBNull.Value;
-                _fields[3] = (object) item.TemplateName ?? DBNull.Value;
+                _fields[1] = string.IsNullOrEmpty(Current.Item.Name) ? DBNull.Value : (object)Current.Item.Name;
+                _fields[2] = Current.Item.TemplateId != Guid.Empty ? (object)Current.Item.TemplateId : DBNull.Value;
+                _fields[3] = (object)item.TemplateName ?? DBNull.Value;
                 _fields[4] = Current.Item.MasterId;
                 _fields[5] = Current.Item.ParentId;
-                _fields[6] = (object) item.ItemPath ?? DBNull.Value;
-                _fields[7] = (object) item.ItemLookupPath ?? DBNull.Value;
-                _fields[8] = (object) item.DependsOnItemCreation ?? DBNull.Value;
+                _fields[6] = (object)item.ItemPath ?? DBNull.Value;
+                _fields[7] = (object)item.ItemLookupPath ?? DBNull.Value;
+                _fields[8] = (object)item.DependsOnItemCreation ?? DBNull.Value;
                 _fields[9] = Current.Item.Id;
 
                 _fields[10] = item.LoadAction.ToString();
                 _fields[11] = item.SourceInfo ?? DBNull.Value;
 
                 _fields[12] = Current.Id;
-                _fields[13] = (object) Current.Name ?? DBNull.Value;
-                _fields[14] = unversioned != null ? (object) unversioned.Language : DBNull.Value;
-                _fields[15] = versioned != null ? (object) versioned.Version : DBNull.Value;
-                _fields[16] = Current.Value != null ? (object) Current.Value : DBNull.Value;
+                _fields[13] = (object)Current.Name ?? DBNull.Value;
+                _fields[14] = unversioned != null ? (object)unversioned.Language : DBNull.Value;
+                _fields[15] = versioned != null ? (object)versioned.Version : DBNull.Value;
+                _fields[16] = Current.Value != null ? (object)Current.Value : DBNull.Value;
 
                 // Data for blob will be fetched through GetStream method.
-                _fields[17] = Current.Blob != null ? (object) null : DBNull.Value;
+                _fields[17] = Current.Blob != null ? (object)null : DBNull.Value;
                 _fields[18] = Current.IsBlob;
 
                 _fields[19] = fieldAction.ToString();

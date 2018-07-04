@@ -117,7 +117,7 @@ namespace Sitecore.DataBlaster.Util.Sql
         {
             var commands = splitOnGoCommands
                 ? Regex.Split(sql, @"^\s*GO\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase)
-                : new[] {sql};
+                : new[] { sql };
 
             foreach (var command in commands)
             {
