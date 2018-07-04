@@ -164,7 +164,7 @@ namespace Sitecore.DataBlaster.Util
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable) _processors).GetEnumerator();
+            return ((IEnumerable)_processors).GetEnumerator();
         }
 
         #endregion

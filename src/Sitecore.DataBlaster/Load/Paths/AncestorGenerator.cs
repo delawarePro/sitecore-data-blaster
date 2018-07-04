@@ -46,7 +46,7 @@ namespace Sitecore.DataBlaster.Load.Paths
 
             // Detect all the ancestors to generate.
             var ancestorNames = item.ItemPath.Substring(root.ItemPath.Length)
-                .Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             ancestorNames = ancestorNames.Take(ancestorNames.Length - 1).ToArray(); // Don't include item.
 
             // Generate all ancestors.

@@ -216,7 +216,7 @@ namespace Sitecore.DataBlaster.Read
                             reader.GetGuid(3), reader.GetGuid(4), reader.GetGuid(5), reader.GetString(2));
 
                     var language = reader.IsDBNull(10) ? null : reader.GetString(10);
-                    var version = reader.IsDBNull(11) ? null : (int?) reader.GetInt32(11);
+                    var version = reader.IsDBNull(11) ? null : (int?)reader.GetInt32(11);
 
                     if (language != null && version != null)
                         item.AddVersionedField(reader.GetGuid(8), language, version.Value, reader.GetString(9));

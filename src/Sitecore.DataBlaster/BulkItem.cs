@@ -292,7 +292,7 @@ namespace Sitecore.DataBlaster
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
                 if (obj.GetType() != this.GetType()) return false;
-                return Equals((BulkFieldKey) obj);
+                return Equals((BulkFieldKey)obj);
             }
 
             public override int GetHashCode()

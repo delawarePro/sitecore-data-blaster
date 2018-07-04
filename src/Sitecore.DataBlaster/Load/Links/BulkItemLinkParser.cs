@@ -54,14 +54,14 @@ namespace Sitecore.DataBlaster.Load.Links
                 .Select(x =>
                 {
                     ID id;
-                    return ID.TryParse(x.Value, out id) ? id : (ID) null;
+                    return ID.TryParse(x.Value, out id) ? id : (ID)null;
                 })
                 .Concat(LinkRegex.Value.Matches(field.Value).Cast<Match>().Select(x =>
                 {
                     Guid guid;
-                    return Guid.TryParse(x.Value, out guid) ? new ID(guid) : (ID) null;
+                    return Guid.TryParse(x.Value, out guid) ? new ID(guid) : (ID)null;
                 }))
-                .Where(x => x != (ID) null);
+                .Where(x => x != (ID)null);
 
             foreach (var link in ids
                 .Select(x => new BulkItemLink(

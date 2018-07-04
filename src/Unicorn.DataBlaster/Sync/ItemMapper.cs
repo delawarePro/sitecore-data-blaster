@@ -1,8 +1,8 @@
-﻿using Rainbow.Model;
+﻿using System;
+using System.IO;
+using Rainbow.Model;
 using Sitecore;
 using Sitecore.DataBlaster.Load;
-using System;
-using System.IO;
 using Convert = System.Convert;
 
 namespace Unicorn.DataBlaster.Sync

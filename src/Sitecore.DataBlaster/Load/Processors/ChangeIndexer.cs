@@ -31,7 +31,7 @@ namespace Sitecore.DataBlaster.Load.Processors
             var stopwatch = Stopwatch.StartNew();
 
             UpdateIndexes(loadContext, changes);
-            loadContext.Log.Info($"Updated content search indexes: {(int) stopwatch.Elapsed.TotalSeconds}s");
+            loadContext.Log.Info($"Updated content search indexes: {(int)stopwatch.Elapsed.TotalSeconds}s");
 
             loadContext.OnDataIndexed?.Invoke(loadContext, changes);
             Event.RaiseEvent("bulkloader:dataindexed", loadContext);
@@ -59,7 +59,7 @@ namespace Sitecore.DataBlaster.Load.Processors
             }
 
             var touchedPercentage =
-                (uint) Math.Ceiling((double) itemChanges.Count / Math.Max(1, index.Summary.NumberOfDocuments) * 100);
+                (uint)Math.Ceiling((double)itemChanges.Count / Math.Max(1, index.Summary.NumberOfDocuments) * 100);
             if (context.IndexRebuildThresholdPercentage.HasValue
                 && touchedPercentage > context.IndexRebuildThresholdPercentage.Value)
             {

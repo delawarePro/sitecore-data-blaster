@@ -9,12 +9,12 @@ using Sitecore.Pipelines;
 using Unicorn.Configuration;
 using Unicorn.DataBlaster.Logging;
 using Unicorn.Loader;
+using Unicorn.Logging;
 using Unicorn.Pipelines.UnicornSyncComplete;
 using Unicorn.Pipelines.UnicornSyncEnd;
 using Unicorn.Pipelines.UnicornSyncStart;
 using Unicorn.Predicates;
 using Unicorn.Publishing;
-using ILogger = Unicorn.Logging.ILogger;
 
 namespace Unicorn.DataBlaster.Sync
 {
@@ -96,11 +96,11 @@ namespace Unicorn.DataBlaster.Sync
                 var startTimestamp = DateTime.Now;
 
                 LoadItems(args.Configurations, parameters, args.Logger);
-                args.Logger.Info($"Extracted and loaded items ({(int) watch.Elapsed.TotalMilliseconds}ms)");
+                args.Logger.Info($"Extracted and loaded items ({(int)watch.Elapsed.TotalMilliseconds}ms)");
 
                 watch.Restart();
                 ClearCaches();
-                args.Logger.Info($"Caches cleared ({(int) watch.Elapsed.TotalMilliseconds}ms)");
+                args.Logger.Info($"Caches cleared ({(int)watch.Elapsed.TotalMilliseconds}ms)");
 
                 ExecuteUnicornSyncComplete(args, parameters, startTimestamp);
                 ExecuteUnicornSyncEnd(args, parameters);
@@ -177,7 +177,7 @@ namespace Unicorn.DataBlaster.Sync
                 CorePipeline.Run("unicornSyncComplete",
                     new UnicornSyncCompletePipelineArgs(config, syncStartTimestamp));
             }
-            args.Logger.Info($"Ran sync complete pipelines ({(int) watch.Elapsed.TotalMilliseconds}ms)");
+            args.Logger.Info($"Ran sync complete pipelines ({(int)watch.Elapsed.TotalMilliseconds}ms)");
         }
 
         protected virtual void ExecuteUnicornSyncEnd(UnicornSyncStartPipelineArgs args,
@@ -188,7 +188,7 @@ namespace Unicorn.DataBlaster.Sync
             // When we tell Unicorn that sync is handled, end pipeline is not called anymore.
             var watch = Stopwatch.StartNew();
             CorePipeline.Run("unicornSyncEnd", new UnicornSyncEndPipelineArgs(args.Logger, true, args.Configurations));
-            args.Logger.Info($"Ran sync end pipeline ({(int) watch.Elapsed.TotalMilliseconds}ms)");
+            args.Logger.Info($"Ran sync end pipeline ({(int)watch.Elapsed.TotalMilliseconds}ms)");
         }
 
         protected virtual BulkLoadContext CreateBulkLoadContext(BulkLoader bulkLoader, string databaseName,

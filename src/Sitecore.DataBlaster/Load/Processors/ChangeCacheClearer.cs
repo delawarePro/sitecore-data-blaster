@@ -35,7 +35,7 @@ namespace Sitecore.DataBlaster.Load.Processors
             else
             {
                 _cachUtil.RemoveItemsFromCachesInBulk(db, GetCacheClearEntries(loadContext.ItemChanges));
-                loadContext.Log.Info($"Items removed from cache: {(int) stopwatch.Elapsed.TotalSeconds}s");
+                loadContext.Log.Info($"Items removed from cache: {(int)stopwatch.Elapsed.TotalSeconds}s");
             }
         }
 
