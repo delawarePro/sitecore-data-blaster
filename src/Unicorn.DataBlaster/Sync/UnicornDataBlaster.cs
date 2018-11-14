@@ -138,7 +138,7 @@ namespace Unicorn.DataBlaster.Sync
                         $"Stage failed during bulkload of database '{databaseName}': {context.FailureMessage}");
 
                 // Support publishing after sync.
-                if (!IsUnicornPublishEnabled && !databaseName.Equals("core", StringComparison.OrdinalIgnoreCase))
+                if (IsUnicornPublishEnabled && !databaseName.Equals("core", StringComparison.OrdinalIgnoreCase))
                 {
                     foreach (var itemChange in context.ItemChanges)
                     {
