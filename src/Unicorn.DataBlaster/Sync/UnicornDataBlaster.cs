@@ -31,10 +31,10 @@ namespace Unicorn.DataBlaster.Sync
             {
                 if (_isUnicornPublishEnabled == null)
                 {
-                    _isUnicornPublishEnabled = Factory.GetConfigNode("//sitecore/pipelines/unicornSyncEnd/processor")?
+                    _isUnicornPublishEnabled = Factory.GetConfigNode("//sitecore/pipelines/unicornSyncComplete/processor")?
                                                    .Attributes?["type"]?.Value
                                                    .StartsWith(
-                                                       "Unicorn.Pipelines.UnicornSyncEnd.TriggerAutoPublishSyncedItems") ??
+                                                       "Unicorn.Pipelines.UnicornSyncComplete.AddSyncedItemsToPublishQueue") ??
                                                false;
                 }
 
