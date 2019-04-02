@@ -4,7 +4,7 @@ using System.IO;
 namespace Sitecore.DataBlaster
 {
     /// <summary>
-    /// Field which has specific values per language but shares the values accross versions.
+    /// Field which has specific values per language but shares the values across versions.
     /// </summary>
     public class UnversionedBulkField : BulkField
     {
@@ -18,5 +18,8 @@ namespace Sitecore.DataBlaster
 
             this.Language = language;
         }
+
+        internal override BulkField CopyTo(BulkItem targetItem)
+            => new UnversionedBulkField(targetItem, Id, Language, Value, Blob, IsBlob, Name);
     }
 }
