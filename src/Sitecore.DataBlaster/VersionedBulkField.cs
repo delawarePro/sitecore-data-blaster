@@ -18,5 +18,8 @@ namespace Sitecore.DataBlaster
 
             Version = version;
         }
+
+        internal override BulkField CopyTo(BulkItem targetItem)
+            => new VersionedBulkField(targetItem, Id, Language, Version, Value, Blob, IsBlob, Name);
     }
 }

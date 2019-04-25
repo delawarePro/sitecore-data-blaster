@@ -60,5 +60,7 @@ namespace Sitecore.DataBlaster
         {
             return $"{Name ?? Id.ToString()}={Value}";
         }
+
+        internal abstract BulkField CopyTo(BulkItem targetItem);
     }
 }

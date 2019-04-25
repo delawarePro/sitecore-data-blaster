@@ -69,7 +69,7 @@ namespace Sitecore.DataBlaster
             this.ParentId = toCopy.ParentId;
             this.ItemPath = toCopy.ItemPath;
 
-            _fields = toCopy._fields.ToDictionary(x => x.Key, x => x.Value);
+            _fields = toCopy._fields.ToDictionary(x => x.Key, x => x.Value.CopyTo(this));
         }
 
         private void AddField(BulkFieldKey key, string value, Func<Stream> blob = null, bool isBlob = false,
