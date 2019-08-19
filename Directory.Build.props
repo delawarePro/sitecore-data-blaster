@@ -1,0 +1,44 @@
+<!-- See https://whereslou.com/2018/09/versioning-and-publishing-nuget-packages-automatically-using-azure-devops-pipelines/ -->
+<Project>
+  <PropertyGroup>
+    <MsBuildAllProjects>$(MsBuildAllProjects);$(MsBuildThisFileFullPath)</MsBuildAllProjects>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Edit this value to change the current major.minor version -->
+    <VersionPrefix>1.2</VersionPrefix>
+
+    <!-- Append the ever incrementing build number if it is available -->
+    <VersionPrefix Condition=" '$(BUILD_BUILDID)' != '' ">$(VersionPrefix).$(BUILD_BUILDID)</VersionPrefix>
+
+    <!-- Common NuGet package properties. -->
+    <Copyright>Copyright © 2019</Copyright>
+    <Company>delaware digital</Company>
+    <Authors>delaware-digital</Authors>
+    <License>http://opensource.org/licenses/MIT</License>
+    <PackageLicense>http://github.com/delawarePro/sitecore-data-blaster</PackageLicense>
+
+    <!-- NuGet debug support. -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    
+    <!-- Snupkg doesn't seem to work yet when installing in client. 
+         Error: no target frameworks specified. -->
+    <SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <Choose>
+    <When Condition=" '$(Prerelease)' != '' ">
+      <PropertyGroup>
+        <!-- Prerelease version numbers are MAJOR.MINOR.#-pre -->
+        <VersionSuffix>$(Prerelease)</VersionSuffix>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <ItemGroup>
+    <!-- Allow source linking in order to easily debug NuGets. -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
