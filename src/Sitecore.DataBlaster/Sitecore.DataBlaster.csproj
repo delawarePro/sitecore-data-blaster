@@ -17,13 +17,17 @@
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
-    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Sitecore.Buckets.NoReferences" Version="8.2.170728" />
+    <PackageReference Include="Sitecore.ContentSearch.NoReferences" Version="8.2.170728" />
+    <PackageReference Include="Sitecore.Kernel.NoReferences" Version="8.2.170728" />
+    <PackageReference Include="Sitecore.Logging.NoReferences" Version="8.2.170728" />
+  </ItemGroup>
+  
   <ItemGroup>
     <None Remove="Load\Sql\01.CreateTempTable.sql" />
     <None Remove="Load\Sql\02.LookupBlobs.sql" />
@@ -59,11 +63,5 @@
     <EmbeddedResource Include="Read\Sql\GetDescendants.sql" />
     <EmbeddedResource Include="Read\Sql\GetDescendantVersionHeaders.sql" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Sitecore.Buckets.NoReferences" Version="8.2.170728" />
-    <PackageReference Include="Sitecore.ContentSearch.NoReferences" Version="8.2.170728" />
-    <PackageReference Include="Sitecore.Kernel.NoReferences" Version="8.2.170728" />
-    <PackageReference Include="Sitecore.Logging.NoReferences" Version="8.2.170728" />
-  </ItemGroup>
+
 </Project>
