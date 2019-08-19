@@ -181,6 +181,19 @@ FROM
 OPTION (MAXRECURSION 1000)
 
 
+-- For all non 'addOnly' blobs, we need cleanup the obsolete 
+-- blob chunks. Store ids of those blobs in a temp table.
+SELECT 
+	DISTINCT CAST(bif.Value AS UNIQUEIDENTIFIER) AS BlobId
+INTO
+	#blobsToCleanup
+FROM
+	#BulkItemsAndFields bif
+WHERE 
+	bif.IsBlob = 1
+	AND DATALENGTH(bif.Blob) > 0
+    AND bif.FieldAction != 'AddOnly'
+
 -- Upsert blobs.
 PRINT CONVERT(VARCHAR(12), GETDATE(), 114) + ': Upserting blobs...'
 DECLARE @BlobChunkSize INT = 1029120 -- Hardcoded value copied from Sitecore SqlServerDataProvider.BlobChunkSize
@@ -238,7 +251,7 @@ WHEN MATCHED AND CAST(target.Data AS VARBINARY(MAX)) != CAST(source.Chunk AS VAR
 WHEN NOT MATCHED BY TARGET THEN
 	INSERT (Id, BlobId, [Index], Data, Created)
 	VALUES (NEWID(), source.BlobId, source.Idx, source.Chunk, @Timestamp)
-WHEN NOT MATCHED BY SOURCE AND target.BlobId IN (SELECT DISTINCT BlobId FROM BlobCte) THEN 
+WHEN NOT MATCHED BY SOURCE AND target.BlobId IN (SELECT BlobId FROM #blobsToCleanup) THEN 
     DELETE
 ;
 

@@ -3,7 +3,7 @@ using Sitecore.DataBlaster.Load.Sql;
 
 namespace Sitecore.DataBlaster.Load.Processors
 {
-	public class ValidateDataIntegrity : IValidateStagedData
+    public class ValidateDataIntegrity : IValidateStagedData
     {
         public bool ValidateLoadStage(BulkLoadContext context, BulkLoadSqlContext sqlContext)
         {

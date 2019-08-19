@@ -8,20 +8,20 @@ using System.Text.RegularExpressions;
 
 namespace Sitecore.DataBlaster.Util.Sql
 {
-	/// <summary>
-	/// Holder class for a connection and a transaction which supports working with embedded sql files.
-	/// </summary>
+    /// <summary>
+    /// Holder class for a connection and a transaction which supports working with embedded sql files.
+    /// </summary>
     public class SqlContext
     {
-	    private readonly Type _defaultSubject;
+        private readonly Type _defaultSubject;
 
-	    public SqlConnection Connection { get; private set; }
+        public SqlConnection Connection { get; private set; }
         public SqlTransaction Transaction { get; set; }
 
         public SqlContext(SqlConnection connection, Type defaultSubject = null)
         {
-	        _defaultSubject = defaultSubject;
-	        if (connection == null) throw new ArgumentNullException(nameof(connection));
+            _defaultSubject = defaultSubject;
+            if (connection == null) throw new ArgumentNullException(nameof(connection));
             Connection = connection;
         }
 
@@ -29,11 +29,12 @@ namespace Sitecore.DataBlaster.Util.Sql
 
         protected virtual StreamReader GetEmbeddedSqlReader(string relativePath, Type subject = null)
         {
-	        if (subject == null) subject = _defaultSubject ?? this.GetType();
+            if (subject == null) subject = _defaultSubject ?? this.GetType();
 
             var stream = subject.Assembly.GetManifestResourceStream(subject, relativePath);
             if (stream == null)
-                throw new ArgumentException($"Could not locate embedded resource '{subject.Namespace}.{relativePath}' in '{subject.Assembly}'.");
+                throw new ArgumentException(
+                    $"Could not locate embedded resource '{subject.Namespace}.{relativePath}' in '{subject.Assembly}'.");
 
             return new StreamReader(stream);
         }
@@ -68,12 +69,12 @@ namespace Sitecore.DataBlaster.Util.Sql
                 @"(?<=DECLARE\s+" + name + @"\s+.*?=\s)[01]{1}",
                 value ? "1" : "0");
         }
-		
-		#endregion
 
-		#region Handling SQL files as filterable lines
+        #endregion
 
-		public IEnumerable<SqlLine> GetEmbeddedSqlLines(string relativePath, Type subject  =null)
+        #region Handling SQL files as filterable lines
+
+        public IEnumerable<SqlLine> GetEmbeddedSqlLines(string relativePath, Type subject = null)
         {
             using (var reader = GetEmbeddedSqlReader(relativePath, subject))
             {
@@ -111,7 +112,7 @@ namespace Sitecore.DataBlaster.Util.Sql
             return command;
         }
 
-        public virtual void ExecuteSql(string sql, int commandTimeout = int.MaxValue, 
+        public virtual void ExecuteSql(string sql, int commandTimeout = int.MaxValue,
             Action<SqlCommand> commandProcessor = null, bool splitOnGoCommands = false)
         {
             var commands = splitOnGoCommands
@@ -146,12 +147,13 @@ namespace Sitecore.DataBlaster.Util.Sql
             return ExecuteReader(string.Join("\n", sqlLines), commandTimeout, commandProcessor);
         }
 
-	    public SqlDataReader ExecuteReader(IEnumerable<SqlLine> sqlLines, int commandTimeout = int.MaxValue,
-		    Action<SqlCommand> commandProcessor = null)
-	    {
-		    return ExecuteReader(string.Join("\n", sqlLines.Select(x => x.ToString())), commandTimeout, commandProcessor);
-	    }
+        public SqlDataReader ExecuteReader(IEnumerable<SqlLine> sqlLines, int commandTimeout = int.MaxValue,
+            Action<SqlCommand> commandProcessor = null)
+        {
+            return ExecuteReader(string.Join("\n", sqlLines.Select(x => x.ToString())), commandTimeout,
+                commandProcessor);
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

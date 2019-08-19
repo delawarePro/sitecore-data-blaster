@@ -10,9 +10,10 @@ namespace Sitecore.DataBlaster.Load.Processors
     {
         public void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext, ICollection<ItemChange> changes)
         {
-            loadContext.Log.Info($"Item changes in database: created: {loadContext.ItemChanges.Count(ic => ic.Created)}, " +
-                             $"saved: {loadContext.ItemChanges.Count(ic => ic.Saved)}, moved: {loadContext.ItemChanges.Count(ic => ic.Moved)}, " +
-                             $"deleted: {loadContext.ItemChanges.Count(ic => ic.Deleted)}");
+            loadContext.Log.Info(
+                $"Item changes in database: created: {loadContext.ItemChanges.Count(ic => ic.Created)}, " +
+                $"saved: {loadContext.ItemChanges.Count(ic => ic.Saved)}, moved: {loadContext.ItemChanges.Count(ic => ic.Moved)}, " +
+                $"deleted: {loadContext.ItemChanges.Count(ic => ic.Deleted)}");
 
             if (!loadContext.Log.Logger.IsEnabledFor(Level.TRACE)) return;
 

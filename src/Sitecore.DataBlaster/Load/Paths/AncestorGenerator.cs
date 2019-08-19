@@ -6,17 +6,17 @@ using Sitecore.DataBlaster.Util;
 
 namespace Sitecore.DataBlaster.Load.Paths
 {
-	/// <summary>
-	/// Allows generating ancestor in a stream of bulk items.
-	/// </summary>
+    /// <summary>
+    /// Allows generating ancestor in a stream of bulk items.
+    /// </summary>
     public class AncestorGenerator
     {
-	    private readonly GuidUtility _guidUtility;
+        private readonly GuidUtility _guidUtility;
 
-	    public AncestorGenerator(GuidUtility guidUtility = null)
-	    {
-		    _guidUtility = guidUtility ?? new GuidUtility();
-	    }
+        public AncestorGenerator(GuidUtility guidUtility = null)
+        {
+            _guidUtility = guidUtility ?? new GuidUtility();
+        }
 
         /// <summary>
         /// Returns ancestor items for every needed level between the item and the root.
@@ -46,7 +46,7 @@ namespace Sitecore.DataBlaster.Load.Paths
 
             // Detect all the ancestors to generate.
             var ancestorNames = item.ItemPath.Substring(root.ItemPath.Length)
-                .Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             ancestorNames = ancestorNames.Take(ancestorNames.Length - 1).ToArray(); // Don't include item.
 
             // Generate all ancestors.

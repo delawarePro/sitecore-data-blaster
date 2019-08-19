@@ -11,7 +11,6 @@ using Sitecore.Configuration;
 using Sitecore.Data.Managers;
 using Sitecore.DataBlaster.Load.Processors;
 using Sitecore.DataBlaster.Load.Sql;
-using Sitecore.DataBlaster.Read;
 using Sitecore.DataBlaster.Util;
 using Sitecore.DataBlaster.Util.Sql;
 using Sitecore.Events;
@@ -20,38 +19,43 @@ namespace Sitecore.DataBlaster.Load
 {
     public class BulkLoader
     {
-	    /// <summary>
-		/// Allows reading and modifying the stream of bulk items.
-		/// </summary>
+        /// <summary>
+        /// Allows reading and modifying the stream of bulk items.
+        /// </summary>
         public Chain<IItemProcessor> OnItemProcessing { get; }
-		/// <summary>
-		/// Allows validation of data that is staged in database.
-		/// </summary>
-		public Chain<IValidateStagedData> OnStagedDataValidating { get; }
-		/// <summary>
-		/// Allosw validation of indexed temp tables.
-		/// </summary>
-	    public Chain<IValidateStagedData> OnTempDataValidating { get; }
-		/// <summary>
-		/// Allows executing database operations in the load transaction.
-		/// </summary>
-		public Chain<ISyncInTransaction> OnTransactionCommitting { get; }
-	    /// <summary>
-	    /// Allows performing operations based on the changed items in the database 
-	    /// but before they might be accesible through the Sitecore items API.
-	    /// </summary>
-	    public Chain<IChangeProcessor> OnItemsLoading { get; }
-		/// <summary>
-		/// Allows performing operations based on the changed items in the database.
-		/// </summary>
-		public Chain<IChangeProcessor> OnItemsLoaded { get; }
+
+        /// <summary>
+        /// Allows validation of data that is staged in database.
+        /// </summary>
+        public Chain<IValidateStagedData> OnStagedDataValidating { get; }
+
+        /// <summary>
+        /// Allosw validation of indexed temp tables.
+        /// </summary>
+        public Chain<IValidateStagedData> OnTempDataValidating { get; }
+
+        /// <summary>
+        /// Allows executing database operations in the load transaction.
+        /// </summary>
+        public Chain<ISyncInTransaction> OnTransactionCommitting { get; }
+
+        /// <summary>
+        /// Allows performing operations based on the changed items in the database 
+        /// but before they might be accesible through the Sitecore items API.
+        /// </summary>
+        public Chain<IChangeProcessor> OnItemsLoading { get; }
+
+        /// <summary>
+        /// Allows performing operations based on the changed items in the database.
+        /// </summary>
+        public Chain<IChangeProcessor> OnItemsLoaded { get; }
 
         public BulkLoader()
         {
-	        var itemValidator = new ItemValidator();
-	        var itemLinker = new ItemLinker();
+            var itemValidator = new ItemValidator();
+            var itemLinker = new ItemLinker();
 
-			OnItemProcessing = new Chain<IItemProcessor>
+            OnItemProcessing = new Chain<IItemProcessor>
             {
                 new ItemBucketer(),
                 new ItemVersionEnsurer(),
@@ -59,29 +63,29 @@ namespace Sitecore.DataBlaster.Load
                 new ItemLinker()
             };
 
-	        OnStagedDataValidating = new Chain<IValidateStagedData>
-	        {
-		        itemValidator,
-		        new ValidateNoDuplicates()
-	        };
+            OnStagedDataValidating = new Chain<IValidateStagedData>
+            {
+                itemValidator,
+                new ValidateNoDuplicates()
+            };
 
-	        OnTempDataValidating = new Chain<IValidateStagedData>
-	        {
-		        new ValidateDataIntegrity()
-	        };
+            OnTempDataValidating = new Chain<IValidateStagedData>
+            {
+                new ValidateDataIntegrity()
+            };
 
             OnTransactionCommitting = new Chain<ISyncInTransaction>
             {
-               new SyncHistoryTable(),
-               new SyncPublishQueue()
+                new SyncHistoryTable(),
+                new SyncPublishQueue()
             };
 
-	        OnItemsLoading = new Chain<IChangeProcessor>
-	        {
-		        new ChangeCacheClearer()
-	        };
+            OnItemsLoading = new Chain<IChangeProcessor>
+            {
+                new ChangeCacheClearer()
+            };
 
-			OnItemsLoaded = new Chain<IChangeProcessor>
+            OnItemsLoaded = new Chain<IChangeProcessor>
             {
                 new ChangeLogger(),
                 itemLinker,
@@ -95,7 +99,7 @@ namespace Sitecore.DataBlaster.Load
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (items == null) throw new ArgumentNullException(nameof(items));
 
-	        items = OnItemProcessing.Execute(items, (p, itms) => p.Process(context, itms));
+            items = OnItemProcessing.Execute(items, (p, itms) => p.Process(context, itms));
 
             var db = Factory.GetDatabase(context.Database, true);
             var connectionString = ConfigurationManager.ConnectionStrings[db.ConnectionStringName].ConnectionString;
@@ -130,7 +134,7 @@ namespace Sitecore.DataBlaster.Load
                         MergeData(context, sqlContext, itemAndFieldReader);
                     }
 
-		            OnTransactionCommitting.Execute(p => p.Process(context, sqlContext));
+                    OnTransactionCommitting.Execute(p => p.Process(context, sqlContext));
 
                     // After this point, there's no use in keeping the transaction arround,
                     // because we cannot sync everything transactionally (e.g. indexes, publshing, ...)
@@ -139,23 +143,23 @@ namespace Sitecore.DataBlaster.Load
                     transaction?.Commit();
                     transaction = null;
 
-					// Allow clearing caches before raising event so that reading the item API in event will result in fresh reads.
-					OnItemsLoading.Execute(p => p.Process(context, sqlContext, context.ItemChanges));
+                    // Allow clearing caches before raising event so that reading the item API in event will result in fresh reads.
+                    OnItemsLoading.Execute(p => p.Process(context, sqlContext, context.ItemChanges));
 
                     // Databases are now entirely in sync.
                     context.OnDataLoaded?.Invoke(context);
                     Event.RaiseEvent("bulkloader:dataloaded", context);
 
-					// Execute post processors.y.
-	                var itemChanges = GetChanges(context, sqlContext);
-	                OnItemsLoaded.Execute(p => p.Process(context, sqlContext, itemChanges));
+                    // Execute post processors.y.
+                    var itemChanges = GetChanges(context, sqlContext);
+                    OnItemsLoaded.Execute(p => p.Process(context, sqlContext, itemChanges));
 
                     context.StageSucceeded(Stage.Load);
                 }
                 catch (Exception ex)
                 {
                     transaction?.Rollback();
-                    context.StageFailed(Stage.Load, ex.Message);
+                    context.StageFailed(Stage.Load, ex, ex.Message);
                 }
                 finally
                 {
@@ -166,21 +170,22 @@ namespace Sitecore.DataBlaster.Load
 
         #region Data staging
 
-        protected virtual bool StageData(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext, 
-			IEnumerable<BulkItem> items, out BulkItemsAndFieldsReader itemAndFieldReader)
+        protected virtual bool StageData(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext,
+            IEnumerable<BulkItem> items, out BulkItemsAndFieldsReader itemAndFieldReader)
         {
             var sql = sqlContext.GetEmbeddedSql(loadContext, "Sql.01.CreateTempTable.sql");
 
             // Cleanup left-over staging tables.
             if (loadContext.StageDataWithoutProcessing) sqlContext.DropStageTables();
 
-			// Create temp table.
-			// We don't use table valued parameters because we don't want to change the database schema.
-	        sqlContext.ExecuteSql(sql);
+            // Create temp table.
+            // We don't use table valued parameters because we don't want to change the database schema.
+            sqlContext.ExecuteSql(sql);
 
             // Load data into temp table.
             itemAndFieldReader = NewReader(items);
-            if (!BulkCopyToTempTable(loadContext, sqlContext, itemAndFieldReader, NewFieldRulesReader(loadContext))) return false;
+            if (!BulkCopyToTempTable(loadContext, sqlContext, itemAndFieldReader, NewFieldRulesReader(loadContext)))
+                return false;
 
             loadContext.OnDataStaged?.Invoke(loadContext);
             Event.RaiseEvent("bulkloader:datastaged", loadContext);
@@ -201,7 +206,7 @@ namespace Sitecore.DataBlaster.Load
         }
 
         protected virtual bool BulkCopyToTempTable(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext,
-			BulkItemsAndFieldsReader itemAndFieldReader, FieldRulesReader fieldRulesReader)
+            BulkItemsAndFieldsReader itemAndFieldReader, FieldRulesReader fieldRulesReader)
         {
             var stopwatch = Stopwatch.StartNew();
 
@@ -218,7 +223,8 @@ namespace Sitecore.DataBlaster.Load
                 }
                 catch (Exception exception)
                 {
-                    loadContext.StageFailed(Stage.Load, exception, $"Write to #BulkItemsAndFields failed with message: {exception.Message}");
+                    loadContext.StageFailed(Stage.Load, exception,
+                        $"Write to #BulkItemsAndFields failed with message: {exception.Message}");
                     return false;
                 }
 
@@ -231,7 +237,8 @@ namespace Sitecore.DataBlaster.Load
                     }
                     catch (Exception exception)
                     {
-                        loadContext.StageFailed(Stage.Load, exception, $"Write to #FieldRules failed with message: {exception}");
+                        loadContext.StageFailed(Stage.Load, exception,
+                            $"Write to #FieldRules failed with message: {exception}");
                     }
                 }
             }
@@ -244,8 +251,8 @@ namespace Sitecore.DataBlaster.Load
 
         #region Lookup, validation and merging of staged data
 
-        protected virtual void LookupIds(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext, 
-			BulkItemsAndFieldsReader itemAndFieldReader)
+        protected virtual void LookupIds(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext,
+            BulkItemsAndFieldsReader itemAndFieldReader)
         {
             var lookupBlobsSql = sqlContext.GetEmbeddedSql(loadContext, "Sql.02.LookupBlobs.sql");
             var lookupItemsSql = sqlContext.GetEmbeddedSql(loadContext, "Sql.03.LookupItems.sql");
@@ -259,12 +266,12 @@ namespace Sitecore.DataBlaster.Load
                 // Using sql parameters resets temp tables.
                 if (loadContext.Destination != null)
                 {
-	                lookupItemsSql = sqlContext.ReplaceOneLineSqlStringParameter(lookupItemsSql, "@destinationPath",
+                    lookupItemsSql = sqlContext.ReplaceOneLineSqlStringParameter(lookupItemsSql, "@destinationPath",
                         loadContext.Destination.ItemPath);
-	                lookupItemsSql = sqlContext.ReplaceOneLineSqlStringParameter(lookupItemsSql, "@destinationId",
+                    lookupItemsSql = sqlContext.ReplaceOneLineSqlStringParameter(lookupItemsSql, "@destinationId",
                         loadContext.Destination.ItemId.ToString("D"));
                 }
-	            sqlContext.ExecuteSql(lookupItemsSql);
+                sqlContext.ExecuteSql(lookupItemsSql);
             }
 
             loadContext.Log.Info($"Looked up ids: {(int)stopwatch.Elapsed.TotalSeconds}s");
@@ -279,12 +286,13 @@ namespace Sitecore.DataBlaster.Load
 
             sqlContext.ExecuteSql(splitTempTablesSql);
 
-	        if (!OnStagedDataValidating.Execute(p => p.ValidateLoadStage(loadContext, sqlContext), breakOnDefault: true))
-		        return false;
+            if (!OnStagedDataValidating.Execute(p => p.ValidateLoadStage(loadContext, sqlContext),
+                breakOnDefault: true))
+                return false;
 
             sqlContext.ExecuteSql(indexesSql);
 
-	        if (!OnTempDataValidating.Execute(p => p.ValidateLoadStage(loadContext, sqlContext), breakOnDefault: true))
+            if (!OnTempDataValidating.Execute(p => p.ValidateLoadStage(loadContext, sqlContext), breakOnDefault: true))
                 return false;
 
             loadContext.Log.Info($"Validated and prepared loaded data: {(int)stopwatch.Elapsed.TotalSeconds}s");
@@ -292,7 +300,7 @@ namespace Sitecore.DataBlaster.Load
         }
 
         protected virtual void MergeData(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext,
-			BulkItemsAndFieldsReader itemAndFieldReader)
+            BulkItemsAndFieldsReader itemAndFieldReader)
         {
             var sql = sqlContext.GetEmbeddedSql(loadContext, "Sql.08.MergeTempData.sql");
 
@@ -342,8 +350,8 @@ namespace Sitecore.DataBlaster.Load
 
         protected virtual ICollection<ItemChange> GetChanges(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext)
         {
-			// By putting this in a virtual method, overriders can implement e.g. crash recovery.
-	        return loadContext.ItemChanges;
+            // By putting this in a virtual method, overriders can implement e.g. crash recovery.
+            return loadContext.ItemChanges;
         }
 
         protected class BulkItemsAndFieldsReader : AbstractEnumeratorReader<BulkField>
@@ -358,7 +366,8 @@ namespace Sitecore.DataBlaster.Load
             public bool HasPathExpressions { get; protected set; } = false;
             public bool HasBlobFields { get; protected set; }
 
-            [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "Not an issue in this case.")]
+            [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification =
+                "Not an issue in this case.")]
             public BulkItemsAndFieldsReader(Func<IEnumerator<BulkField>> enumerator)
                 : base(enumerator)
             {
@@ -375,8 +384,8 @@ namespace Sitecore.DataBlaster.Load
                     return false;
                 }
 
-	            var item = (BulkLoadItem) Current.Item;
-				ReadItemCount++;
+                var item = (BulkLoadItem)Current.Item;
+                ReadItemCount++;
 
                 if (!HasFieldDependencies && (Current.DependsOnCreate || Current.DependsOnUpdate))
                     HasFieldDependencies = true;
@@ -393,10 +402,10 @@ namespace Sitecore.DataBlaster.Load
                     case BulkLoadAction.AddOnly:
                         fieldAction = BulkLoadAction.AddOnly;
                         break;
-					case BulkLoadAction.AddItemOnly:
-						fieldAction = BulkLoadAction.AddItemOnly;
-						break;
-					case BulkLoadAction.Update:
+                    case BulkLoadAction.AddItemOnly:
+                        fieldAction = BulkLoadAction.AddItemOnly;
+                        break;
+                    case BulkLoadAction.Update:
                         fieldAction = BulkLoadAction.Update;
                         break;
                     case BulkLoadAction.UpdateExistingItem:
@@ -484,7 +493,8 @@ namespace Sitecore.DataBlaster.Load
 
             public override int FieldCount => 4;
 
-            [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "Not an issue in this case.")]
+            [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification =
+                "Not an issue in this case.")]
             public FieldRulesReader(Func<IEnumerator<FieldRule>> enumerator)
                 : base(enumerator)
             {

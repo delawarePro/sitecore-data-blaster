@@ -16,23 +16,24 @@ namespace Sitecore.DataBlaster.Load.Processors
     /// </summary>
     public class ItemBucketer : IItemProcessor
     {
-	    private static readonly Guid BucketFolderTemplate = Guid.Parse(Sitecore.Buckets.Util.Constants.BucketFolder);
+        private static readonly Guid BucketFolderTemplate = Guid.Parse(Sitecore.Buckets.Util.Constants.BucketFolder);
 
-		private readonly AncestorGenerator _ancestorGenerator;
+        private readonly AncestorGenerator _ancestorGenerator;
 
-	    public ItemBucketer(AncestorGenerator ancestorGenerator = null)
-	    {
-		    _ancestorGenerator = ancestorGenerator ?? new AncestorGenerator();
-	    }
+        public ItemBucketer(AncestorGenerator ancestorGenerator = null)
+        {
+            _ancestorGenerator = ancestorGenerator ?? new AncestorGenerator();
+        }
 
         public IEnumerable<BulkLoadItem> Process(BulkLoadContext context, IEnumerable<BulkLoadItem> items)
         {
-            return !context.BucketIfNeeded 
-                ? items 
+            return !context.BucketIfNeeded
+                ? items
                 : items.SelectMany(item => Bucket(item, context, true));
         }
 
-        protected virtual IEnumerable<BulkLoadItem> Bucket(BulkLoadItem item, BulkLoadContext context, bool skipIfNotBucket)
+        protected virtual IEnumerable<BulkLoadItem> Bucket(BulkLoadItem item, BulkLoadContext context,
+            bool skipIfNotBucket)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (item == null) throw new ArgumentNullException(nameof(item));
