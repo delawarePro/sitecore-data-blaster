@@ -1,12 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
+    <TargetFramework>net462</TargetFramework>
     <SignAssembly>True</SignAssembly>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Unicorn.DataBlaster</PackageId>
     <Title>Unicorn.DataBlaster</Title>
     <Description>Using Sitecore.DataBlaster for deserialization.</Description>
     <PackageTags>sitecore serialization</PackageTags>
+
+    <!-- Don't use 'contentfiles' feature, only expose content in 'content' folder in NuGet.
+         Allows for initial configuration only. (Backwards compatibility) -->
+    <ContentTargetFolders>content</ContentTargetFolders>
   </PropertyGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) ">
@@ -19,14 +23,6 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="App_Config\Unicorn\Unicorn.DataBlaster.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="App_Config\Unicorn\Unicorn.DataBlaster.config" />
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Sitecore.Kernel.NoReferences" Version="8.2.170728" />
@@ -36,6 +32,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sitecore.DataBlaster\Sitecore.DataBlaster.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="App_Config\Unicorn\Unicorn.DataBlaster.config" />
   </ItemGroup>
 
 </Project>
