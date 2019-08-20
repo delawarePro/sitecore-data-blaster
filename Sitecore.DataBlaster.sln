@@ -1,11 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitecore.DataBlaster", "src\Sitecore.DataBlaster\Sitecore.DataBlaster.csproj", "{D5B8428D-84FD-48BC-B722-7F9ECA73A43A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sitecore.DataBlaster", "src\Sitecore.DataBlaster\Sitecore.DataBlaster.csproj", "{D5B8428D-84FD-48BC-B722-7F9ECA73A43A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.DataBlaster", "src\Unicorn.DataBlaster\Unicorn.DataBlaster.csproj", "{2B27B2B1-BBCA-4F0D-A604-68FF0713DC21}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{878491BE-8601-40EC-85A7-BAC24BF53687}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		license.txt = license.txt
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +33,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BAC6357F-BD59-49EF-950F-1E8DF1400C05}
 	EndGlobalSection
 EndGlobal
