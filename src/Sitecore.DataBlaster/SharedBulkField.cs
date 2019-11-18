@@ -9,9 +9,12 @@ namespace Sitecore.DataBlaster
     public class SharedBulkField : BulkField
     {
         internal SharedBulkField(BulkItem item, Guid id, string value,
-            Func<Stream> blob = null, bool isBlob = false, string name = null) 
+            Func<Stream> blob = null, bool isBlob = false, string name = null)
             : base(item, id, value, blob, isBlob, name)
         {
         }
+
+        internal override BulkField CopyTo(BulkItem targetItem)
+            => new SharedBulkField(targetItem, Id, Value, Blob, IsBlob, Name);
     }
 }

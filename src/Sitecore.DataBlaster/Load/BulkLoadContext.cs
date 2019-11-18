@@ -15,6 +15,7 @@ namespace Sitecore.DataBlaster.Load
     public class BulkLoadContext
     {
         private ILog _log;
+
         public ILog Log
         {
             get { return _log; }
@@ -24,10 +25,11 @@ namespace Sitecore.DataBlaster.Load
                 _log = value;
             }
         }
+
         public string FailureMessage { get; private set; }
 
         public string Database { get; private set; }
-       
+
         /// <summary>
         /// Stages data to temp tables, but don't merge it with existing data.
         /// Useful for debugging.
@@ -72,7 +74,7 @@ namespace Sitecore.DataBlaster.Load
         /// Be aware, this needs to do additional database reads while processing the item stream.
         /// </summary>
         public bool BucketIfNeeded { get; set; }
-        
+
         /// <summary>
         /// Resolves the paths for items in buckets.
         /// </summary>
@@ -80,8 +82,19 @@ namespace Sitecore.DataBlaster.Load
 
         /// <summary>
         /// Whether to remove updated items from Sitecore caches. Enabled by default.
+        /// This setting is not impacted by the value of <seealso cref="ClearCaches"/>.
         /// </summary>
         public bool RemoveItemsFromCaches { get; set; }
+
+        /// <summary>
+        /// Offers an alternative strategy to remove items from Sitecore caches, by clearing them completely.
+        /// This setting is not impacted by the value of <seealso cref="RemoveItemsFromCaches"/>.
+        /// 
+        /// When both the imported data set and the Sitecore caches are quite large, there is a performance impact in scanning the caches for entries that must be deleted.
+        /// In this case it could prove more useful to just clear the caches, instead of spending time to scan them. The performance impact is then in repopulation, though.
+        /// For settings that have an impact on cache removal performance, see <see cref="Sitecore.Configuration.Settings.Caching.CacheKeyIndexingEnabled"/>.
+        /// </summary>
+        public bool ClearCaches { get; set; }
 
         /// <summary>
         /// Whether to update the history engine of Sitecore. This engine is e.g. used for index syncs.
@@ -93,7 +106,7 @@ namespace Sitecore.DataBlaster.Load
         /// </summary>
         public bool? UpdatePublishQueue { get; set; }
 
-		/// <summary>
+        /// <summary>
         /// Whether to update the link database.
         /// </summary>
         public bool? UpdateLinkDatabase { get; set; }
@@ -120,12 +133,12 @@ namespace Sitecore.DataBlaster.Load
                 if (_allIndexes != null)
                     return _allIndexes;
 
-	            _allIndexes = ContentSearchManager.Indexes
-		            .Where(idx => idx.Crawlers
-			        .OfType<SitecoreItemCrawler>()
-			        .Any(c => Database.Equals(c.Database, StringComparison.OrdinalIgnoreCase)))
-		            .ToList();
-				return _allIndexes;
+                _allIndexes = ContentSearchManager.Indexes
+                    .Where(idx => idx.Crawlers
+                        .OfType<SitecoreItemCrawler>()
+                        .Any(c => Database.Equals(c.Database, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+                return _allIndexes;
             }
             set { _indexesToUpdate = value; }
         }
@@ -144,10 +157,12 @@ namespace Sitecore.DataBlaster.Load
         /// Data is staged in database but no changes are made yet.
         /// </summary>
         public Action<BulkLoadContext> OnDataStaged { get; set; }
+
         /// <summary>
         /// Data is loaded in database.
         /// </summary>
         public Action<BulkLoadContext> OnDataLoaded { get; set; }
+
         /// <summary>
         /// Data is indexed.
         /// </summary>
@@ -187,7 +202,7 @@ namespace Sitecore.DataBlaster.Load
             // Only rebuild when index is not empty
             return searchIndex.Summary.NumberOfDocuments > 0;
         }
-        
+
         #region Stage results and feedback
 
         private readonly Dictionary<Stage, StageResult> _stageResults = new Dictionary<Stage, StageResult>();
@@ -216,7 +231,7 @@ namespace Sitecore.DataBlaster.Load
                 Log.Fatal(message);
             else
                 Log.Fatal(message +
-                    $"\nException type: {ex.GetType().Name}\nException message: {ex.Message}\nStack trace: {ex.StackTrace}");
+                          $"\nException type: {ex.GetType().Name}\nException message: {ex.Message}\nStack trace: {ex.StackTrace}");
 
             FailureMessage = message;
         }
@@ -252,20 +267,20 @@ namespace Sitecore.DataBlaster.Load
             var templateCache = GetTemplateCache();
             templateCache[item.Id] = item.TemplateId;
 
-			// Cache path.
-	        IDictionary<string, Guid> pathCache = null;
+            // Cache path.
+            IDictionary<string, Guid> pathCache = null;
             if (!string.IsNullOrWhiteSpace(item.ItemPath))
             {
                 pathCache = GetPathCache();
                 pathCache[item.ItemPath] = item.Id;
             }
 
-			// Cache lookup path.
-	        if (!string.IsNullOrWhiteSpace(item.ItemLookupPath))
-	        {
-		        pathCache = pathCache ?? GetPathCache();
-				pathCache[item.ItemLookupPath] = item.Id;
-	        }
+            // Cache lookup path.
+            if (!string.IsNullOrWhiteSpace(item.ItemLookupPath))
+            {
+                pathCache = pathCache ?? GetPathCache();
+                pathCache[item.ItemLookupPath] = item.Id;
+            }
         }
 
         private IDictionary<string, Guid> GetPathCache()
@@ -300,7 +315,8 @@ namespace Sitecore.DataBlaster.Load
 
         #region Additional state
 
-        private readonly Dictionary<string, object> _state = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, object> _state =
+            new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets state from the context.

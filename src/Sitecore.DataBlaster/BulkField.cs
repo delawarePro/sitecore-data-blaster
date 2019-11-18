@@ -11,10 +11,12 @@ namespace Sitecore.DataBlaster
         /// Field id.
         /// </summary>
         public Guid Id { get; private set; }
+
         /// <summary>
         /// Fieldname, only used for diagnostics.
         /// </summary>
         public string Name { get; set; }
+
         /// <summary>
         /// Field value.
         /// </summary>
@@ -38,7 +40,8 @@ namespace Sitecore.DataBlaster
         /// </summary>
         public bool DependsOnUpdate { get; set; }
 
-        protected BulkField(BulkItem item, Guid id, string value, Func<Stream> blob = null, bool isBlob = false, string name = null)
+        protected BulkField(BulkItem item, Guid id, string value, Func<Stream> blob = null, bool isBlob = false,
+            string name = null)
         {
             if (id == Guid.Empty)
                 throw new ArgumentException("Id of field should not be an empty Guid.", nameof(id));
@@ -57,5 +60,7 @@ namespace Sitecore.DataBlaster
         {
             return $"{Name ?? Id.ToString()}={Value}";
         }
+
+        internal abstract BulkField CopyTo(BulkItem targetItem);
     }
 }

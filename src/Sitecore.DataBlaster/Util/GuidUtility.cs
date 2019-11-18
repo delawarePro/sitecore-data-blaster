@@ -9,29 +9,29 @@ namespace Sitecore.DataBlaster.Util
     /// </summary>
     public class GuidUtility
     {
-	    /// <summary>
-	    /// The namespace for fully-qualified domain names (from RFC 4122, Appendix C).
-	    /// </summary>
-	    public static readonly Guid DnsNamespace = new Guid("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+        /// <summary>
+        /// The namespace for fully-qualified domain names (from RFC 4122, Appendix C).
+        /// </summary>
+        public static readonly Guid DnsNamespace = new Guid("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
 
-	    /// <summary>
-	    /// The namespace for URLs (from RFC 4122, Appendix C).
-	    /// </summary>
-	    public static readonly Guid UrlNamespace = new Guid("6ba7b811-9dad-11d1-80b4-00c04fd430c8");
+        /// <summary>
+        /// The namespace for URLs (from RFC 4122, Appendix C).
+        /// </summary>
+        public static readonly Guid UrlNamespace = new Guid("6ba7b811-9dad-11d1-80b4-00c04fd430c8");
 
-	    /// <summary>
-	    /// The namespace for ISO OIDs (from RFC 4122, Appendix C).
-	    /// </summary>
-	    public static readonly Guid IsoOidNamespace = new Guid("6ba7b812-9dad-11d1-80b4-00c04fd430c8");
+        /// <summary>
+        /// The namespace for ISO OIDs (from RFC 4122, Appendix C).
+        /// </summary>
+        public static readonly Guid IsoOidNamespace = new Guid("6ba7b812-9dad-11d1-80b4-00c04fd430c8");
 
-		/// <summary>
-		/// Creates a name-based UUID using the algorithm from RFC 4122 §4.3.
-		/// </summary>
-		/// <param name="namespaceId">The ID of the namespace.</param>
-		/// <param name="name">The name (within that namespace).</param>
-		/// <returns>A UUID derived from the namespace and name.</returns>
-		/// <remarks>See <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html">Generating a deterministic GUID</a>.</remarks>
-		public virtual Guid Create(Guid namespaceId, string name)
+        /// <summary>
+        /// Creates a name-based UUID using the algorithm from RFC 4122 §4.3.
+        /// </summary>
+        /// <param name="namespaceId">The ID of the namespace.</param>
+        /// <param name="name">The name (within that namespace).</param>
+        /// <returns>A UUID derived from the namespace and name.</returns>
+        /// <remarks>See <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html">Generating a deterministic GUID</a>.</remarks>
+        public virtual Guid Create(Guid namespaceId, string name)
         {
             return Create(namespaceId, name, 5);
         }

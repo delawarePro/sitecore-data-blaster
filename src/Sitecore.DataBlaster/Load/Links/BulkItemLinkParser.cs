@@ -6,9 +6,9 @@ using Sitecore.Data;
 
 namespace Sitecore.DataBlaster.Load.Links
 {
-	/// <summary>
-	/// Parses out links in content of bulk items.
-	/// </summary>
+    /// <summary>
+    /// Parses out links in content of bulk items.
+    /// </summary>
     public class BulkItemLinkParser
     {
         protected Lazy<Regex> IdRegex = new Lazy<Regex>(() =>
@@ -25,8 +25,9 @@ namespace Sitecore.DataBlaster.Load.Links
                 "__Revision"
             }, StringComparer.OrdinalIgnoreCase));
 
-        public virtual IEnumerable<BulkLoadItem> ExtractLinks(IEnumerable<BulkLoadItem> bulkItems, BulkLoadContext context, 
-			LinkedList<BulkItemLink> links)
+        public virtual IEnumerable<BulkLoadItem> ExtractLinks(IEnumerable<BulkLoadItem> bulkItems,
+            BulkLoadContext context,
+            LinkedList<BulkItemLink> links)
         {
             foreach (var item in bulkItems)
             {
@@ -43,7 +44,8 @@ namespace Sitecore.DataBlaster.Load.Links
             }
         }
 
-	    protected virtual void ExtractLinks(BulkLoadContext context, BulkLoadItem item, BulkField field, LinkedList<BulkItemLink> links)
+        protected virtual void ExtractLinks(BulkLoadContext context, BulkLoadItem item, BulkField field,
+            LinkedList<BulkItemLink> links)
         {
             if (string.IsNullOrWhiteSpace(field.Value)) return;
             if (IgnoredFields.Value.Contains(field.Name)) return;
@@ -59,7 +61,7 @@ namespace Sitecore.DataBlaster.Load.Links
                     Guid guid;
                     return Guid.TryParse(x.Value, out guid) ? new ID(guid) : (ID)null;
                 }))
-                .Where(x => x != (ID) null);
+                .Where(x => x != (ID)null);
 
             foreach (var link in ids
                 .Select(x => new BulkItemLink(

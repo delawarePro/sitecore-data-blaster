@@ -16,9 +16,10 @@ namespace Sitecore.DataBlaster.Load.Processors
 {
     public class ChangeIndexer : IChangeProcessor
     {
-	    private static readonly Guid BucketFolderTemplate = Guid.Parse(Sitecore.Buckets.Util.Constants.BucketFolder);
+        private static readonly Guid BucketFolderTemplate = Guid.Parse(Sitecore.Buckets.Util.Constants.BucketFolder);
 
-		public virtual void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext, ICollection<ItemChange> changes)
+        public virtual void Process(BulkLoadContext loadContext, BulkLoadSqlContext sqlContext,
+            ICollection<ItemChange> changes)
         {
             if (!loadContext.UpdateIndexes) return;
             if (loadContext.IndexesToUpdate == null || loadContext.IndexesToUpdate.Count == 0) return;
@@ -46,7 +47,7 @@ namespace Sitecore.DataBlaster.Load.Processors
             }
         }
 
-        protected virtual void UpdateIndex(BulkLoadContext context, ICollection<ItemChange> itemChanges, 
+        protected virtual void UpdateIndex(BulkLoadContext context, ICollection<ItemChange> itemChanges,
             Database database, ISearchIndex index)
         {
             Job job = null;
@@ -57,7 +58,8 @@ namespace Sitecore.DataBlaster.Load.Processors
                 return;
             }
 
-            var touchedPercentage = (uint)Math.Ceiling((double)itemChanges.Count / Math.Max(1, index.Summary.NumberOfDocuments) * 100);
+            var touchedPercentage =
+                (uint)Math.Ceiling((double)itemChanges.Count / Math.Max(1, index.Summary.NumberOfDocuments) * 100);
             if (context.IndexRebuildThresholdPercentage.HasValue
                 && touchedPercentage > context.IndexRebuildThresholdPercentage.Value)
             {
@@ -65,12 +67,14 @@ namespace Sitecore.DataBlaster.Load.Processors
                 job = IndexCustodian.FullRebuild(index);
             }
             else if (context.Destination != null
-                     && !itemChanges.Any(ic => ic.Deleted)   // Refresh doesn't do deletes.
+                     && !itemChanges.Any(ic => ic.Deleted) // Refresh doesn't do deletes.
                      && context.IndexRefreshThresholdPercentage.HasValue
                      && touchedPercentage > context.IndexRefreshThresholdPercentage.Value)
             {
-                context.Log.Info($"Refreshing index '{index.Name}' from '{context.Destination.ItemPath}' because {touchedPercentage}% is changed.");
-                job = IndexCustodian.Refresh(index, new SitecoreIndexableItem(database.GetItem(new ID(context.Destination.ItemId))));
+                context.Log.Info(
+                    $"Refreshing index '{index.Name}' from '{context.Destination.ItemPath}' because {touchedPercentage}% is changed.");
+                job = IndexCustodian.Refresh(index,
+                    new SitecoreIndexableItem(database.GetItem(new ID(context.Destination.ItemId))));
             }
             else
             {
@@ -100,8 +104,12 @@ namespace Sitecore.DataBlaster.Load.Processors
                 .Where(ic => ic.Deleted)
                 .Select(ic =>
                 {
-                    var language = !string.IsNullOrEmpty(ic.Language) ? Language.Parse(ic.Language) : LanguageManager.DefaultLanguage;
-                    var version = ic.Version.HasValue ? Sitecore.Data.Version.Parse(ic.Version.Value) : Sitecore.Data.Version.First;
+                    var language = !string.IsNullOrEmpty(ic.Language)
+                        ? Language.Parse(ic.Language)
+                        : LanguageManager.DefaultLanguage;
+                    var version = ic.Version.HasValue
+                        ? Sitecore.Data.Version.Parse(ic.Version.Value)
+                        : Sitecore.Data.Version.First;
                     return new SitecoreItemUniqueId(new ItemUri(new ID(ic.ItemId), language, version, db));
                 }));
 

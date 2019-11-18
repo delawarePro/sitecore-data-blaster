@@ -11,12 +11,15 @@ namespace Sitecore.DataBlaster
         public int Version { get; private set; }
 
         internal VersionedBulkField(BulkItem item, Guid id, string language, int version, string value,
-            Func<Stream> blob = null, bool isBlob = false, string name = null) 
+            Func<Stream> blob = null, bool isBlob = false, string name = null)
             : base(item, id, language, value, blob, isBlob, name)
         {
             if (version <= 0) throw new ArgumentException("Version should be greater than 0.", "version");
 
             Version = version;
         }
+
+        internal override BulkField CopyTo(BulkItem targetItem)
+            => new VersionedBulkField(targetItem, Id, Language, Version, Value, Blob, IsBlob, Name);
     }
 }
