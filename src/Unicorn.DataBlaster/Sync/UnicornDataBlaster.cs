@@ -140,13 +140,19 @@ namespace Unicorn.DataBlaster.Sync
                 // Support publishing after sync.
                 if (IsUnicornPublishEnabled && !databaseName.Equals("core", StringComparison.OrdinalIgnoreCase))
                 {
-                    foreach (var itemChange in context.ItemChanges)
-                    {
-                        ManualPublishQueueHandler.AddItemToPublish(itemChange.ItemId);
-                    }
-                }
-            }
-        }
+                    // Sort item changes by path length before sending them to Unicorn publish.
+                    // This way we are sure Parents will always be published before Children.
+                    var sortedItemChanges = context
+                        .ItemChanges
+                        .OrderBy(x => x.ItemPathLevel);
+
+                    foreach (var itemChange in sortedItemChanges)
+					{
+						ManualPublishQueueHandler.AddItemToPublish(itemChange.ItemId);
+					}
+				}
+			}
+		}
 
         protected virtual void ClearCaches()
         {
