@@ -53,13 +53,20 @@ namespace Sitecore.DataBlaster.Load.Processors
         {
             BaseJob job = null;
 
-            if (!context.ShouldUpdateIndex(index))
+            var indexSummary = index.RequestSummary();
+            if (indexSummary == null)
+            {
+                context.Log.Warn($"Skipping updating index '{index.Name}' because we could not get its summary.");
+                return;
+            }
+            if (!context.ShouldUpdateIndex(index, indexSummary))
             {
                 context.Log.Warn($"Skipping updating index '{index.Name}' because its empty.");
                 return;
             }
 
-            uint touchedPercentage = GetTouchedPercentage(index, itemChanges);
+            var touchedPercentage =
+                (uint)Math.Ceiling((double)itemChanges.Count / Math.Max(1, indexSummary.NumberOfDocuments) * 100);
             if (context.IndexRebuildThresholdPercentage.HasValue
                 && touchedPercentage > context.IndexRebuildThresholdPercentage.Value)
             {
@@ -131,16 +138,6 @@ namespace Sitecore.DataBlaster.Load.Processors
                 }));
 
             return identifiers;
-        }
-
-        /// <summary>
-        /// Returns the percentage of the index documents that where changed with the given list of item changes.
-        /// If an index can't tell us the total number of documents, we treat it as an empty index.
-        /// </summary>
-        private static uint GetTouchedPercentage(ISearchIndex index, ICollection<ItemChange> itemChanges)
-        {
-            var nrOfDocuments =index.RequestSummary()?.NumberOfDocuments ?? 0;
-            return (uint)Math.Ceiling((double)itemChanges.Count / Math.Max(1, nrOfDocuments) * 100);
         }
     }
 }

@@ -5,7 +5,6 @@ using log4net;
 using Sitecore.Buckets.Util;
 using Sitecore.ContentSearch;
 using Sitecore.Data.Items;
-using Sitecore.DataBlaster.Util;
 using Sitecore.Diagnostics;
 
 namespace Sitecore.DataBlaster.Load
@@ -194,15 +193,14 @@ namespace Sitecore.DataBlaster.Load
             LookupItemsIn(item.ID.Guid, item.Paths.Path);
         }
 
-        public bool ShouldUpdateIndex(ISearchIndex searchIndex)
+        public bool ShouldUpdateIndex(ISearchIndex searchIndex, ISearchIndexSummary searchIndexSummary)
         {
             // Always update when index has been explicitly set as to update
             if (_indexesToUpdate != null && _indexesToUpdate.Contains(searchIndex))
                 return true;
 
-            // Only rebuild when index is not empty
-            var summary = searchIndex.RequestSummary();
-            return summary == null || summary.NumberOfDocuments > 0;
+            // Only update when index is not empty
+            return searchIndexSummary.NumberOfDocuments > 0;
         }
 
         #region Stage results and feedback
