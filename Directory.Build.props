@@ -4,14 +4,17 @@
     <MsBuildAllProjects>$(MsBuildAllProjects);$(MsBuildThisFileFullPath)</MsBuildAllProjects>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- Edit this value to change the current major.minor version -->
-    <VersionPrefix>1.1</VersionPrefix>
+    <!-- Edit this value to change the current major.minor version 
+         The first 3 versions follow the Sitecore release.
+         The fourth indicates our major revision (e.g. breaking changes) for that Sitecore release.
+    -->
+    <VersionPrefix>9.3.0.1</VersionPrefix>
 
     <!-- Append the ever incrementing build number if it is available -->
     <VersionPrefix Condition=" '$(BUILD_BUILDID)' != '' ">$(VersionPrefix).$(BUILD_BUILDID)</VersionPrefix>
 
     <!-- Common NuGet package properties. -->
-    <Copyright>Copyright © 2019</Copyright>
+    <Copyright>Copyright © 2020</Copyright>
     <Company>delaware digital</Company>
     <Authors>delaware-digital</Authors>
     <License>http://opensource.org/licenses/MIT</License>

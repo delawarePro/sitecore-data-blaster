@@ -193,14 +193,14 @@ namespace Sitecore.DataBlaster.Load
             LookupItemsIn(item.ID.Guid, item.Paths.Path);
         }
 
-        public bool ShouldUpdateIndex(ISearchIndex searchIndex)
+        public bool ShouldUpdateIndex(ISearchIndex searchIndex, ISearchIndexSummary searchIndexSummary)
         {
             // Always update when index has been explicitly set as to update
             if (_indexesToUpdate != null && _indexesToUpdate.Contains(searchIndex))
                 return true;
 
-            // Only rebuild when index is not empty
-            return searchIndex.Summary.NumberOfDocuments > 0;
+            // Only update when index is not empty: updating an empty index would trigger a rebuild.
+            return searchIndexSummary.NumberOfDocuments > 0;
         }
 
         #region Stage results and feedback

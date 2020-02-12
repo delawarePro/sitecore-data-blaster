@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Sitecore.Abstractions;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
 using Sitecore.Data;
 using Sitecore.Data.Managers;
 using Sitecore.DataBlaster.Load.Sql;
+using Sitecore.DataBlaster.Util;
 using Sitecore.Events;
 using Sitecore.Globalization;
-using Sitecore.Jobs;
 
 namespace Sitecore.DataBlaster.Load.Processors
 {
@@ -50,16 +51,22 @@ namespace Sitecore.DataBlaster.Load.Processors
         protected virtual void UpdateIndex(BulkLoadContext context, ICollection<ItemChange> itemChanges,
             Database database, ISearchIndex index)
         {
-            Job job = null;
+            BaseJob job = null;
 
-            if (!context.ShouldUpdateIndex(index))
+            var indexSummary = index.RequestSummary();
+            if (indexSummary == null)
             {
-                context.Log.Warn($"Skipping updating index '{index.Name}' because its empty.");
+                context.Log.Warn($"Skipping updating index '{index.Name}' because we could not get its summary.");
+                return;
+            }
+            if (!context.ShouldUpdateIndex(index, indexSummary))
+            {
+                context.Log.Warn($"Skipping updating index '{index.Name}' because it's empty.");
                 return;
             }
 
             var touchedPercentage =
-                (uint)Math.Ceiling((double)itemChanges.Count / Math.Max(1, index.Summary.NumberOfDocuments) * 100);
+                (uint)Math.Ceiling((double)itemChanges.Count / Math.Max(1, indexSummary.NumberOfDocuments) * 100);
             if (context.IndexRebuildThresholdPercentage.HasValue
                 && touchedPercentage > context.IndexRebuildThresholdPercentage.Value)
             {

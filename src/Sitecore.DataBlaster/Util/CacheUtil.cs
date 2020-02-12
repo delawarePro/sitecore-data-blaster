@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -8,7 +9,6 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.DataProviders.Sql;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 
 namespace Sitecore.DataBlaster.Util
 {
