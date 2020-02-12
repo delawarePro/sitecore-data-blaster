@@ -199,7 +199,7 @@ namespace Sitecore.DataBlaster.Load
             if (_indexesToUpdate != null && _indexesToUpdate.Contains(searchIndex))
                 return true;
 
-            // Only update when index is not empty
+            // Only update when index is not empty: updating an empty index would trigger a rebuild.
             return searchIndexSummary.NumberOfDocuments > 0;
         }
 

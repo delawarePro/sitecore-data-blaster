@@ -61,7 +61,7 @@ namespace Sitecore.DataBlaster.Load.Processors
             }
             if (!context.ShouldUpdateIndex(index, indexSummary))
             {
-                context.Log.Warn($"Skipping updating index '{index.Name}' because its empty.");
+                context.Log.Warn($"Skipping updating index '{index.Name}' because it's empty.");
                 return;
             }
 
