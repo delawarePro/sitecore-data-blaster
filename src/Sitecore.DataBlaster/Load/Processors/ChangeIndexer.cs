@@ -9,6 +9,7 @@ using Sitecore.ContentSearch.Maintenance;
 using Sitecore.Data;
 using Sitecore.Data.Managers;
 using Sitecore.DataBlaster.Load.Sql;
+using Sitecore.DataBlaster.Util;
 using Sitecore.Events;
 using Sitecore.Globalization;
 
@@ -58,8 +59,7 @@ namespace Sitecore.DataBlaster.Load.Processors
                 return;
             }
 
-            var touchedPercentage =
-                (uint)Math.Ceiling((double)itemChanges.Count / Math.Max(1, index.Summary.NumberOfDocuments) * 100);
+            uint touchedPercentage = GetTouchedPercentage(index, itemChanges);
             if (context.IndexRebuildThresholdPercentage.HasValue
                 && touchedPercentage > context.IndexRebuildThresholdPercentage.Value)
             {
@@ -131,6 +131,16 @@ namespace Sitecore.DataBlaster.Load.Processors
                 }));
 
             return identifiers;
+        }
+
+        /// <summary>
+        /// Returns the percentage of the index documents that where changed with the given list of item changes.
+        /// If an index can't tell us the total number of documents, we treat it as an empty index.
+        /// </summary>
+        private static uint GetTouchedPercentage(ISearchIndex index, ICollection<ItemChange> itemChanges)
+        {
+            var nrOfDocuments =index.RequestSummary()?.NumberOfDocuments ?? 0;
+            return (uint)Math.Ceiling((double)itemChanges.Count / Math.Max(1, nrOfDocuments) * 100);
         }
     }
 }

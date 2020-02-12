@@ -5,6 +5,7 @@ using log4net;
 using Sitecore.Buckets.Util;
 using Sitecore.ContentSearch;
 using Sitecore.Data.Items;
+using Sitecore.DataBlaster.Util;
 using Sitecore.Diagnostics;
 
 namespace Sitecore.DataBlaster.Load
@@ -200,7 +201,8 @@ namespace Sitecore.DataBlaster.Load
                 return true;
 
             // Only rebuild when index is not empty
-            return searchIndex.Summary.NumberOfDocuments > 0;
+            var summary = searchIndex.RequestSummary();
+            return summary == null || summary.NumberOfDocuments > 0;
         }
 
         #region Stage results and feedback
