@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
     <SignAssembly>True</SignAssembly>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Unicorn.DataBlaster</PackageId>
@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sitecore.Kernel.NoReferences" Version="8.2.170728" />
-    <PackageReference Include="Sitecore.Logging.NoReferences" Version="8.2.170728" />
+    <PackageReference Include="Sitecore.Kernel" Version="9.3.0" />
+    <PackageReference Include="Sitecore.Logging" Version="9.3.0" />
     <PackageReference Include="Unicorn" Version="4.0.0" />
   </ItemGroup>
 

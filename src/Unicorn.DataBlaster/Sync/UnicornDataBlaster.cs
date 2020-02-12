@@ -31,11 +31,11 @@ namespace Unicorn.DataBlaster.Sync
             {
                 if (_isUnicornPublishEnabled == null)
                 {
-                    _isUnicornPublishEnabled = Factory.GetConfigNode("//sitecore/pipelines/unicornSyncEnd/processor")?
-                                                   .Attributes?["type"]?.Value
-                                                   .StartsWith(
-                                                       "Unicorn.Pipelines.UnicornSyncEnd.TriggerAutoPublishSyncedItems") ??
-                                               false;
+                    _isUnicornPublishEnabled = Factory
+                        .GetConfigNode("//sitecore/pipelines/unicornSyncEnd/processor")?
+                        .Attributes?["type"]?
+                        .Value
+                        .StartsWith("Unicorn.Pipelines.UnicornSyncEnd.TriggerAutoPublishSyncedItems") ?? false;
                 }
 
                 return _isUnicornPublishEnabled.Value;
@@ -147,12 +147,12 @@ namespace Unicorn.DataBlaster.Sync
                         .OrderBy(x => x.ItemPathLevel);
 
                     foreach (var itemChange in sortedItemChanges)
-					{
-						ManualPublishQueueHandler.AddItemToPublish(itemChange.ItemId);
-					}
-				}
-			}
-		}
+                    {
+                        ManualPublishQueueHandler.AddItemToPublish(itemChange.ItemId);
+                    }
+                }
+            }
+        }
 
         protected virtual void ClearCaches()
         {
