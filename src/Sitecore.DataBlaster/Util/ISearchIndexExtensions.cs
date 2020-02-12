@@ -11,8 +11,8 @@ namespace Sitecore.DataBlaster.Util
         /// </summary>
         public static ISearchIndexSummary RequestSummary(this ISearchIndex index)
         {
-            return index is BaseIndexSummaryClient baseIndex
-                ? baseIndex.RequestSummary()
+            return index is IIndexSummarySource summarSource
+                ? summarSource.GetClient().RequestSummary()
                 : null;
         }
     }
