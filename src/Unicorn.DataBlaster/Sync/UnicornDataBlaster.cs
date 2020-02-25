@@ -98,13 +98,12 @@ namespace Unicorn.DataBlaster.Sync
         public virtual void Process(UnicornSyncStartPipelineArgs args)
         {
             // Find optional data blaster parameters in custom data of arguments.
-            object parms;
-            args.CustomData.TryGetValue(PipelineArgsParametersKey, out parms);
-            var parameters = parms as DataBlasterParameters;
+            args.CustomData.TryGetValue(PipelineArgsParametersKey, out var parms);
+            var parameters = parms as DataBlasterParameters ?? new DataBlasterParameters();
 
             // If not enabled by default, is DataBlaster enabled through parameters?
-            if (Settings.GetBoolSetting(DisableDataBlasterSettingName, false) &&
-                (parameters == null || !parameters.EnableDataBlaster)) return;
+            if (Settings.GetBoolSetting(DisableDataBlasterSettingName, false) && !parameters.EnableDataBlaster)
+                return;
 
             try
             {
