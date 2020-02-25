@@ -63,10 +63,12 @@ How to get started?
         <!-- Set this flag to false to update the global publish queue for incremental publishes. -->
         <SkipPublishQueue>true</SkipPublishQueue>
         <!-- Set this flag to true, to skip updating the link database. 
-                                The link database will be updated for all configs when there's at least one config set to update the link database. -->
+             The link database will be updated for all configs when there's at least one config set to update the link database.
+        -->
         <SkipLinkDatabase>false</SkipLinkDatabase>
         <!-- Set this flag to true, to skip updating the indexes. 
-                                The indexes will be updated for all configs when there's at least one config set to update the indexes. -->
+             The indexes will be updated for all configs when there's at least one config set to update the indexes.
+        -->
         <SkipIndexes>false</SkipIndexes>
       </unicornSyncStart>
     </pipelines>
