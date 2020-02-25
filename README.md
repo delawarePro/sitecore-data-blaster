@@ -45,13 +45,13 @@ How to get started?
   <sitecore>
     <settings>
       <!-- Set this flag to disable the data blaster integration and fallback to 'regular' Unicorn. 
-                 If you want to temporarily disable the data blaster, you can do the following: 
-                    var helper = new SerializationHelper();
-                    helper.PipelineArgumentData[UnicornDataBlaster.PipelineArgsParametersKey] =
-		                new ExtendedDataBlasterParameters { DisableDataBlaster = true };
-                    helper.SyncConfigurations(...);
-                -->
-      <setting name="Unicorn.DisableDataBlaster" value="false" />
+           If you want to temporarily disable the data blaster, you can do the following: 
+             var helper = new SerializationHelper();
+             helper.PipelineArgumentData[UnicornDataBlaster.PipelineArgsParametersKey] =
+               new ExtendedDataBlasterParameters { DisableDataBlasterByDefault = true };
+             helper.SyncConfigurations(...);
+      -->
+      <setting name="Unicorn.DisableDataBlasterByDefault" value="false" />
     </settings>
     <pipelines>
       <unicornSyncStart>
