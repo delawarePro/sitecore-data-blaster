@@ -70,22 +70,40 @@ namespace Unicorn.DataBlaster.Sync
         /// <remarks>If not skipped and at least one config nneds to update the indexes, it's updated for all configs.</remarks>
         public bool SkipIndexes { get; set; } = false;
 
-        public UnicornDataBlaster(BulkLoader bulkLoader = null, ItemExtractor itemExtractor = null)
+        #region Explicit ctors to support Sitecore.Configuration.DefaultFactory.CreateFromTypeName
+
+        public UnicornDataBlaster()
+            : this(new BulkLoader(), new ItemExtractor())
         {
-            BulkLoader = bulkLoader ?? new BulkLoader();
-            ItemExtractor = itemExtractor ?? new ItemExtractor();
         }
+
+        public UnicornDataBlaster(BulkLoader bulkLoader)
+            : this(bulkLoader, new ItemExtractor())
+        {
+        }
+
+        public UnicornDataBlaster(ItemExtractor itemExtractor)
+            : this(new BulkLoader(), itemExtractor)
+        {
+        }
+
+        public UnicornDataBlaster(BulkLoader bulkLoader, ItemExtractor itemExtractor)
+        {
+            BulkLoader = bulkLoader;
+            ItemExtractor = itemExtractor;
+        }
+
+        #endregion
 
         public virtual void Process(UnicornSyncStartPipelineArgs args)
         {
             // Find optional data blaster parameters in custom data of arguments.
-            object parms;
-            args.CustomData.TryGetValue(PipelineArgsParametersKey, out parms);
-            var parameters = parms as DataBlasterParameters;
+            args.CustomData.TryGetValue(PipelineArgsParametersKey, out var parms);
+            var parameters = parms as DataBlasterParameters ?? new DataBlasterParameters();
 
             // If not enabled by default, is DataBlaster enabled through parameters?
-            if (Settings.GetBoolSetting(DisableDataBlasterSettingName, false) &&
-                (parameters == null || !parameters.EnableDataBlaster)) return;
+            if (Settings.GetBoolSetting(DisableDataBlasterSettingName, false) && !parameters.EnableDataBlaster)
+                return;
 
             try
             {
