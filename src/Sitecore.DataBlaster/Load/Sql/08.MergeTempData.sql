@@ -18,7 +18,7 @@ CREATE TABLE #ItemActions
 DECLARE @ProcessDependingFields BIT = 1
 DECLARE @CleanupBlobs BIT = 0
 DECLARE @AllowTemplateChanges BIT = 0
-DECLARE @DenyCleanupOFields BIT = 0
+DECLARE @AllowCleanupOfFields BIT = 0
 DECLARE @DefaultLanguage VARCHAR(50) = 'en'
 
 DECLARE @Timestamp DATETIME = GETUTCDATE()
@@ -621,7 +621,7 @@ BEGIN
 	    LEFT JOIN Items ti ON ti.ID = i.TemplateID
     WHERE ti.ID IS NULL
 
-	IF @DenyCleanupOFields = 0
+	IF @AllowCleanupOfFields = 1
 	BEGIN
 		-- Delete fields without template field items.
 		DELETE f
