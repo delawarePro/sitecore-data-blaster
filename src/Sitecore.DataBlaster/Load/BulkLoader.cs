@@ -314,6 +314,8 @@ namespace Sitecore.DataBlaster.Load
                 itemAndFieldReader.HasBlobFields);
             sql = sqlContext.ReplaceOneLineSqlBitParameter(sql, "@AllowTemplateChanges",
                 loadContext.AllowTemplateChanges);
+            sql = sqlContext.ReplaceOneLineSqlBitParameter(sql, "@AllowCleanupOfFields",
+                loadContext.AllowCleanupOfFields);
             sql = sqlContext.ReplaceOneLineSqlStringParameter(sql, "@DefaultLanguage",
                 LanguageManager.DefaultLanguage.Name);
 

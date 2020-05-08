@@ -223,6 +223,12 @@ namespace Unicorn.DataBlaster.Sync
             context.Log = new SitecoreAndUnicornLog(LoggerFactory.GetLogger(GetType()), logger);
 
             context.AllowTemplateChanges = true;
+
+            // In Sitecore 9.3 initial release they did change properties on fields (versioned to unversioned) in the core database but it wasn't done in a clean way.
+            // There are now more than 3000 field records stored in the versioned table which should have been moved to the unverioned table. 
+            // As we don't do bulk imports, or many template changes during development on the core database, we will disable this by default, and avoid deleting relevant content in the core database.
+            // Sitecore its default deserialize operation is also not doing cleanup work.
+            context.AllowCleanupOfFields = !databaseName.Equals("core", StringComparison.InvariantCultureIgnoreCase);
             context.StageDataWithoutProcessing = parameters.StageDataWithoutProcessing;
 
             // Use the shotgun, removing items one by one is too slow for full deserialize.

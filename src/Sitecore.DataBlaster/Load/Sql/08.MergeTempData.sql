@@ -18,6 +18,7 @@ CREATE TABLE #ItemActions
 DECLARE @ProcessDependingFields BIT = 1
 DECLARE @CleanupBlobs BIT = 0
 DECLARE @AllowTemplateChanges BIT = 0
+DECLARE @AllowCleanupOfFields BIT = 0
 DECLARE @DefaultLanguage VARCHAR(50) = 'en'
 
 DECLARE @Timestamp DATETIME = GETUTCDATE()
@@ -609,8 +610,7 @@ FROM ArchivedFields af
 	JOIN #SyncItems si ON
 		si.Id = a.ItemId
 DELETE a FROM Archive a JOIN #SyncItems si ON si.Id = a.ItemId
-
-
+ 
 IF @AllowTemplateChanges = 1
 BEGIN
     -- Delete items without templates.
@@ -621,85 +621,87 @@ BEGIN
 	    LEFT JOIN Items ti ON ti.ID = i.TemplateID
     WHERE ti.ID IS NULL
 
+	IF @AllowCleanupOfFields = 1
+	BEGIN
+		-- Delete fields without template field items.
+		DELETE f
+		OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, NULL, NULL, @Timestamp 
+			INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Version, Timestamp)
+		FROM SharedFields f
+			JOIN Items i ON i.Id = f.ItemId
+			LEFT JOIN Items tfi ON tfi.ID = f.FieldId
+		WHERE tfi.ID IS NULL
 
-    -- Delete fields without template field items.
-    DELETE f
-    OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, NULL, NULL, @Timestamp 
-		INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Version, Timestamp)
-    FROM SharedFields f
-		JOIN Items i ON i.Id = f.ItemId
-	    LEFT JOIN Items tfi ON tfi.ID = f.FieldId
-    WHERE tfi.ID IS NULL
+		DELETE f
+		OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, deleted.Language, NULL, @Timestamp 
+			INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Version, Timestamp)
+		FROM UnversionedFields f
+			JOIN Items i ON i.Id = f.ItemId
+			LEFT JOIN Items tfi ON tfi.ID = f.FieldId
+		WHERE tfi.ID IS NULL
 
-    DELETE f
-    OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, deleted.Language, NULL, @Timestamp 
-		INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Version, Timestamp)
-    FROM UnversionedFields f
-		JOIN Items i ON i.Id = f.ItemId
-	    LEFT JOIN Items tfi ON tfi.ID = f.FieldId
-    WHERE tfi.ID IS NULL
-
-    DELETE f
-    OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, deleted.Language, deleted.Version, @Timestamp 
-		INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Version, Timestamp)
-    FROM VersionedFields f
-		JOIN Items i ON i.Id = f.ItemId
-	    LEFT JOIN Items tfi ON tfi.ID = f.FieldId
-    WHERE tfi.ID IS NULL
-
-
-    -- Delete shared fields that are not shared anymore.
-    PRINT CONVERT(VARCHAR(12), GETDATE(), 114) + ': Deleting shared fields that are not shared anymore...'
-    DELETE
-        f
-    OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, @Timestamp 
-		INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Timestamp)
-    FROM SharedFields f
-		JOIN Items i ON i.Id = f.ItemId
-	    -- Find 'Shared' field for template item of the field.
-	    -- Shared field is itself shared too.
-	    LEFT JOIN SharedFields sf ON
-		    sf.ItemId = f.FieldId
-		    AND sf.FieldId = @SharedFieldId
-    WHERE sf.Id IS NULL OR sf.Value != '1'
+		DELETE f
+		OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, deleted.Language, deleted.Version, @Timestamp 
+			INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Version, Timestamp)
+		FROM VersionedFields f
+			JOIN Items i ON i.Id = f.ItemId
+			LEFT JOIN Items tfi ON tfi.ID = f.FieldId
+		WHERE tfi.ID IS NULL
 
 
-    -- Delete unversioned fields that are not unversioned anymore.
-    PRINT CONVERT(VARCHAR(12), GETDATE(), 114) + ': Deleting unversioned fields that are not unversioned anymore...'
-    DELETE
-        f
-    OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, deleted.Language, @Timestamp 
-		INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Timestamp)
-    FROM UnversionedFields f
-		JOIN Items i ON i.Id = f.ItemId
-	    -- Find 'Unversioned' field for template item of the field.
-	    -- Unversioned field is itself shared.
-	    LEFT JOIN SharedFields uf ON
-		    uf.ItemId = f.FieldId
-		    AND uf.FieldId = @UnversionedFieldId
-    WHERE uf.Id IS NULL OR uf.Value != '1'
+		-- Delete shared fields that are not shared anymore.
+		PRINT CONVERT(VARCHAR(12), GETDATE(), 114) + ': Deleting shared fields that are not shared anymore...'
+		DELETE
+			f
+		OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, @Timestamp 
+			INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Timestamp)
+		FROM SharedFields f
+			JOIN Items i ON i.Id = f.ItemId
+			-- Find 'Shared' field for template item of the field.
+			-- Shared field is itself shared too.
+			LEFT JOIN SharedFields sf ON
+				sf.ItemId = f.FieldId
+				AND sf.FieldId = @SharedFieldId
+		WHERE sf.Id IS NULL OR sf.Value != '1'
 
 
-    -- Delete versioned fields that are not versioned anymore.
-    PRINT CONVERT(VARCHAR(12), GETDATE(), 114) + ': Deleting versioned fields that are not unversioned anymore...'
-    DELETE
-        f
-    OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, deleted.Language, deleted.Version, @Timestamp 
-		INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Version, Timestamp)
-    FROM VersionedFields f
-		JOIN Items i ON i.Id = f.ItemId
-	    -- Find 'Shared' field for template item of the field.
-	    -- Shared field is itself shared too.
-	    LEFT JOIN SharedFields sf ON
-		    sf.ItemId = f.FieldId
-		    AND sf.FieldId = @SharedFieldId
+		-- Delete unversioned fields that are not unversioned anymore.
+		PRINT CONVERT(VARCHAR(12), GETDATE(), 114) + ': Deleting unversioned fields that are not unversioned anymore...'
+		DELETE
+			f
+		OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, deleted.Language, @Timestamp 
+			INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Timestamp)
+		FROM UnversionedFields f
+			JOIN Items i ON i.Id = f.ItemId
+			-- Find 'Unversioned' field for template item of the field.
+			-- Unversioned field is itself shared.
+			LEFT JOIN SharedFields uf ON
+				uf.ItemId = f.FieldId
+				AND uf.FieldId = @UnversionedFieldId
+		WHERE uf.Id IS NULL OR uf.Value != '1'
+
+
+		-- Delete versioned fields that are not versioned anymore.
+		PRINT CONVERT(VARCHAR(12), GETDATE(), 114) + ': Deleting versioned fields that are not unversioned anymore...'
+		DELETE
+			f
+		OUTPUT deleted.ItemId, i.ParentId, i.TemplateId, 1, deleted.Language, deleted.Version, @Timestamp 
+			INTO #ItemActions (ItemId, ParentId, TemplateId, Saved, Language, Version, Timestamp)
+		FROM VersionedFields f
+			JOIN Items i ON i.Id = f.ItemId
+			-- Find 'Shared' field for template item of the field.
+			-- Shared field is itself shared too.
+			LEFT JOIN SharedFields sf ON
+				sf.ItemId = f.FieldId
+				AND sf.FieldId = @SharedFieldId
 		
-	    -- Find 'Unversioned' field for template item of the field.
-	    -- Unversioned field is itself shared.
-	    LEFT JOIN SharedFields uf ON
-		    uf.ItemId = f.FieldId
-		    AND uf.FieldId = @UnversionedFieldId
-    WHERE sf.Value = '1' OR uf.Value = '1'
+			-- Find 'Unversioned' field for template item of the field.
+			-- Unversioned field is itself shared.
+			LEFT JOIN SharedFields uf ON
+				uf.ItemId = f.FieldId
+				AND uf.FieldId = @UnversionedFieldId
+		WHERE sf.Value = '1' OR uf.Value = '1'
+	END
 END
 
 
