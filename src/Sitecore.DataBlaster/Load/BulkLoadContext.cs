@@ -59,6 +59,14 @@ namespace Sitecore.DataBlaster.Load
         public bool AllowTemplateChanges { get; set; }
 
         /// <summary>
+        /// In the initial version if Sitecore 9.3, they did not put all field records in the right fields table (versioned/unversioned/shared).
+        /// E.g. the Display Name is configured as unversioned field on the template, but the actual data is stored in the versioned table.
+        /// We need this extra flag to be able to disable the cleanup operation during bulk load, else the Display Name values will be removed, resulting in empty context menu's.
+        /// This flag is typically only relevant during deserialization actions.
+        /// </summary>
+        public bool DenyCleanupOFields { get; set; }
+
+        /// <summary>
         /// Forces updates in Sitecore database, so that all loaded items will have an item change.
         /// All modification dates will be reset. 
         /// </summary>
