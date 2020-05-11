@@ -64,7 +64,7 @@ namespace Sitecore.DataBlaster.Load
         /// We need this extra flag to be able to disable the cleanup operation during bulk load, else the Display Name values will be removed, resulting in empty context menu's.
         /// This flag is typically only relevant during deserialization actions.
         /// </summary>
-        public bool @AllowCleanupOfFields { get; set; } = true;
+        public bool AllowCleanupOfFields { get; set; } = true;
 
         /// <summary>
         /// Forces updates in Sitecore database, so that all loaded items will have an item change.
