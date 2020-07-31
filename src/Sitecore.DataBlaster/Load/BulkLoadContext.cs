@@ -84,6 +84,13 @@ namespace Sitecore.DataBlaster.Load
         public bool BucketIfNeeded { get; set; }
 
         /// <summary>
+        ///  When you get into connection pool starvation, and using a higher max pool or do more in batching is not a good option for you, 
+        ///  another option we suggest is to load the blob first into a memorystream and release the connection immediately. 
+        ///  If enabled, this will consume more memory.
+        /// </summary>
+        public bool LoadBlobsInMemoryFirst { get; set; }
+
+        /// <summary>
         /// Resolves the paths for items in buckets.
         /// </summary>
         public IDynamicBucketFolderPath BucketFolderPath { get; set; }
