@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Sitecore.Abstractions;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
@@ -10,7 +11,6 @@ using Sitecore.Data.Managers;
 using Sitecore.DataBlaster.Load.Sql;
 using Sitecore.Events;
 using Sitecore.Globalization;
-using Sitecore.Jobs;
 
 namespace Sitecore.DataBlaster.Load.Processors
 {
@@ -50,7 +50,7 @@ namespace Sitecore.DataBlaster.Load.Processors
         protected virtual void UpdateIndex(BulkLoadContext context, ICollection<ItemChange> itemChanges,
             Database database, ISearchIndex index)
         {
-            Job job = null;
+            BaseJob job = null;
 
             if (!context.ShouldUpdateIndex(index))
             {
