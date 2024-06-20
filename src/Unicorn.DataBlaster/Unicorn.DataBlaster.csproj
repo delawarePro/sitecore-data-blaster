@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="Sitecore.Kernel" Version="10.4.0" />
     <PackageReference Include="Sitecore.Logging" Version="10.4.0" />
-    <PackageReference Include="Unicorn" Version="4.1.2" />
+    <PackageReference Include="Unicorn" Version="4.1.6" />
   </ItemGroup>
 
   <ItemGroup>
