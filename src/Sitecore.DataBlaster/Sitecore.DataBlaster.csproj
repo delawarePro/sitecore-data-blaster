@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <SignAssembly>True</SignAssembly>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Sitecore.DataBlaster</PackageId>
@@ -16,10 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sitecore.Buckets" Version="9.3.0" />
-    <PackageReference Include="Sitecore.ContentSearch" Version="9.3.0" />
-    <PackageReference Include="Sitecore.Kernel" Version="9.3.0" />
-    <PackageReference Include="Sitecore.Logging" Version="9.3.0" />
+    <PackageReference Include="Sitecore.Buckets" Version="10.4.0" />
+    <PackageReference Include="Sitecore.ContentSearch" Version="10.4.0" />
+    <PackageReference Include="Sitecore.Kernel" Version="10.4.0" />
+    <PackageReference Include="Sitecore.Logging" Version="10.4.0" />
   </ItemGroup>
   
   <ItemGroup>
