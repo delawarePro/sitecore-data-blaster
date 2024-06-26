@@ -5,7 +5,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- The version prefix matches the Sitecore release of the referenced DLLs. -->
-    <VersionPrefix>9.3.0</VersionPrefix>
+    <VersionPrefix>10.4.0</VersionPrefix>
 
     <!-- Append the ever incrementing build number if it is available -->
     <VersionPrefix Condition=" '$(BUILD_BUILDID)' != '' ">$(VersionPrefix).$(BUILD_BUILDID)</VersionPrefix>
@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <!-- Allow source linking in order to easily debug NuGets. -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
